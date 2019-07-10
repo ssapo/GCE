@@ -11,3 +11,7 @@ GC공부할려고 만드는 저장소 임니다
 4. Unity의 C# GC와 다른 점은 무엇인지?
 
 알아보려고 합니닷
+
+커맨드 창에 stat MemoryPlatform 입력
+
+![img](https://i.imgur.com/W0vInRL.png)
