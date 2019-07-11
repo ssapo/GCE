@@ -2,9 +2,9 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b826615311ec44e2ae35360cd6743d2d)](https://app.codacy.com/app/ssapo/GCE?utm_source=github.com&utm_medium=referral&utm_content=ssapo/GCE&utm_campaign=Badge_Grade_Dashboard)
 
-GC공부할려고 만드는 저장소 임니다 
+GC공부할려고 만드는 저장소 임니다  
 레퍼런스  
-
+  
 [언리얼 엔진 위키](https://wiki.unrealengine.com/Garbage_Collection_%26_Dynamic_Memory_Allocation)  
    
 [스택오버플로 GC와 리플렉션을 C++에서 사용하는 이유?](https://stackoverflow.com/questions/33985860/ue4-object-has-reflection-why-to-use-c-then)  
