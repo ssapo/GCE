@@ -8,16 +8,17 @@ GC공부할려고 만드는 저장소 임니다
 [스택오버플로 GC와 리플렉션을 C++에서 사용하는 이유?](https://stackoverflow.com/questions/33985860/ue4-object-has-reflection-why-to-use-c-then)  
 알아볼 것들
 1. C++은 언매니지드 언어임에도 왜 언리얼은 GC를 사용하는지?  
-(Stack Overflow)  
 ![img](https://i.imgur.com/Hiut88i.png)  
+
 ![img](https://i.imgur.com/SdQlhl1.png)  
+
 2. 언리얼에서는 GC를 어떤식으로 사용하는지  
 (Epic wiki)
   Implications of Not Using UPROPERTY()  
 If you do not use UPROPERTY() you can never rely on your dynamic UObject staying in existence!  
 Make sure you pay close attention to this if you are spawning UObjects or using NewObject())!  
-3. 알고리즘, 장점과 단점
-4. Unity의 C# GC와 다른 점은 무엇인지?
+3. 알고리즘, 장점과 단점 
+4. Unity의 C# GC와 다른 점은 무엇인지? 
 
 알아보려고 합니닷
 
