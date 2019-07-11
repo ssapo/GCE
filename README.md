@@ -8,7 +8,8 @@ GC공부할려고 만드는 저장소 임니다
 알아볼 것들
 1. C++은 언매니지드 언어임에도 왜 언리얼은 GC를 사용하는지?
 2. 언리얼에서는 GC를 어떤식으로 사용하는지  
-- Implications of Not Using UPROPERTY()  
+(Eic wiki)
+  Implications of Not Using UPROPERTY()  
 If you do not use UPROPERTY() you can never rely on your dynamic UObject staying in existence!  
 Make sure you pay close attention to this if you are spawning UObjects or using NewObject())!  
 3. 알고리즘, 장점과 단점
