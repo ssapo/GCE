@@ -27,3 +27,6 @@ Make sure you pay close attention to this if you are spawning UObjects or using 
 커맨드 창에 stat MemoryPlatform 입력
 
 ![img](https://i.imgur.com/W0vInRL.png)
+
+Engine/Source/Runtime/CoreUObject/Private/UObject  
+Engine/Source/Runtime/CoreUObject/Public/UObject  
