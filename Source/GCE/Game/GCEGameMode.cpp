@@ -2,12 +2,12 @@
 
 
 #include "GCEGameMode.h"
-#include "GCE.h"
+#include <LogVerbosity.h>
 //#include "GCE_Actor.h"
 
 AGCEGameMode::AGCEGameMode()
 {
-	
+	GCE_LOG_S(Display);
 }
 
 void AGCEGameMode::Tick(float DeltaSeconds)
