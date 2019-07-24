@@ -3,12 +3,24 @@
 
 #include "ChessGameModeBase.h"
 #include "ChessPlayerController.h"
+#include "ChessActor.h"
 
 AChessGameModeBase::AChessGameModeBase()
 {
 	GCE_LOG_S(Display);
 
 	PlayerControllerClass = AChessPlayerController::StaticClass();
+
+	ChessMap = {
+		1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 1, 1, 1,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0,
+		1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 1, 1, 1, 1, 1,
+	};
 }
 
 void AChessGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -22,6 +34,16 @@ void AChessGameModeBase::StartPlay()
 {
 	Super::StartPlay();
 	GCE_LOG_S(Display);
+
+	if (ChessActors.Num() > 0)
+	{
+		auto BoardClass = ChessActors[EChessActor::Marble_Board];
+		if (BoardClass)
+		{
+			GetWorld()->SpawnActor<AChessActor>(BoardClass);
+		}
+	}
+
 }
 
 void AChessGameModeBase::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
@@ -46,5 +68,12 @@ void AChessGameModeBase::Logout(AController* Exiting)
 {
 	Super::Logout(Exiting);
 	GCE_LOG_S(Display);
+}
+
+void AChessGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+	GCE_LOG_S(Display);
+
 }
 

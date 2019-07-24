@@ -6,9 +6,6 @@
 #include "GameFramework/GameModeBase.h"
 #include "ChessGameModeBase.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class GCE_API AChessGameModeBase : public AGameModeBase
 {
@@ -30,6 +27,14 @@ public:
 
 	virtual void Logout(AController* Exiting) override;
 
+protected:
+	virtual void BeginPlay() override;
+
 private:
 
+	UPROPERTY()
+		TArray<int32> ChessMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Map", Meta = (AllowPrivateAccess = true))
+		TMap<EChessActor, UClass*> ChessActors;
 };

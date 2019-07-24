@@ -23,4 +23,7 @@ public:
 	virtual void RestartLevel() override;
 	virtual void BeginPlay() override;
 
+private:
+	static TWeakObjectPtr<AChessPlayerController> LocalPC;
+
 };

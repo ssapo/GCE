@@ -20,7 +20,7 @@ public:
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "ChessPiece")
-		void InitChessPiece(class UMeshComponent* Piece, class UMovementComponent* Movement);
+		void InitChessActor(class UMeshComponent* Piece);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -28,7 +28,4 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessPiece", Meta = (AllowPrivateAccess = true))
 		class UMeshComponent* ChessBody;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessPiece", Meta = (AllowPrivateAccess = true))
-		class UMovementComponent* ChessMove;
 };

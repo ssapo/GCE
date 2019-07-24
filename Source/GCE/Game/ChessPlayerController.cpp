@@ -3,6 +3,8 @@
 
 #include "ChessPlayerController.h"
 
+TWeakObjectPtr<AChessPlayerController> AChessPlayerController::LocalPC;
+
 AChessPlayerController::AChessPlayerController()
 {
 	GCE_LOG_S(Display);
@@ -12,6 +14,8 @@ void AChessPlayerController::ReceivedPlayer()
 {
 	Super::ReceivedPlayer();
 	GCE_LOG_S(Display);
+
+	LocalPC = this;
 }
 
 void AChessPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)

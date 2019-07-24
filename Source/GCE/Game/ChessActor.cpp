@@ -14,13 +14,11 @@ AChessActor::AChessActor()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void AChessActor::InitChessPiece(class UMeshComponent* Piece, class UMovementComponent* Movement)
+void AChessActor::InitChessActor(class UMeshComponent* Piece)
 {
 	GCE_CHECK(nullptr != Piece);
-	GCE_CHECK(nullptr != Movement);
 
 	ChessBody = Piece;
-	ChessMove = Movement;
 }
 
 // Called when the game starts or when spawned
