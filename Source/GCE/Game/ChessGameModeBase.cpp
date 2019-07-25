@@ -35,15 +35,32 @@ void AChessGameModeBase::StartPlay()
 	Super::StartPlay();
 	GCE_LOG_S(Display);
 
-	if (ChessActors.Num() > 0)
+	auto BoardClass = ChessActors[EChessActor::Marble_Board];
+	if (BoardClass)
 	{
-		auto BoardClass = ChessActors[EChessActor::Marble_Board];
-		if (BoardClass)
-		{
-			GetWorld()->SpawnActor<AChessActor>(BoardClass);
-		}
+		GetWorld()->SpawnActor<AChessActor>(BoardClass);
 	}
 
+	if (ChessActors.Num() > 0)
+	{
+		FVector Location(-350.0f, -350.0f, 50.0f);
+		for (int y = 0; y < 8; ++y)
+		{
+			for (int x = 0; x < 8; ++x)
+			{
+				FVector NewLocation = Location + FVector(x * 100.0f, y * 100.0f, 0.0f);
+				int32 Value = ChessMap[y * 8 + x];
+				if (Value == 1)
+				{
+					auto BoardClass = ChessActors[EChessActor::White_Pawn];
+					if (BoardClass)
+					{
+						GetWorld()->SpawnActor<AChessActor>(BoardClass, NewLocation, FRotator::ZeroRotator);
+					}
+				}
+			}
+		}
+	}
 }
 
 void AChessGameModeBase::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
