@@ -10,7 +10,7 @@
 AChessActor::AChessActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	GCE_LOG_S(Display);
+	GCE_LOG_S(Log);
 	PrimaryActorTick.bCanEverTick = true;
 }
 
@@ -24,8 +24,38 @@ void AChessActor::InitChessActor(class UMeshComponent* Piece)
 // Called when the game starts or when spawned
 void AChessActor::BeginPlay()
 {
-	GCE_LOG_S(Display);
+	GCE_LOG_S(Log);
 	Super::BeginPlay();
+}
+
+void AChessActor::NotifyActorOnClicked(FKey ButtonPressed)
+{
+	GCE_LOG(Log, TEXT("Name [%s] Key [%s]"), *GetName(), *ButtonPressed.ToString());
+	Super::NotifyActorOnClicked(ButtonPressed);
+}
+
+void AChessActor::NotifyActorOnInputTouchBegin(const ETouchIndex::Type FingerIndex)
+{
+	GCE_LOG(Log, TEXT("Name [%s]"), *GetName());
+	Super::NotifyActorOnInputTouchBegin(FingerIndex);
+}
+
+void AChessActor::NotifyActorOnInputTouchEnd(const ETouchIndex::Type FingerIndex)
+{
+	GCE_LOG(Log, TEXT("Name [%s]"), *GetName());
+	Super::NotifyActorOnInputTouchEnd(FingerIndex);
+}
+
+void AChessActor::NotifyActorOnInputTouchEnter(const ETouchIndex::Type FingerIndex)
+{
+	GCE_LOG(Log, TEXT("Name [%s]"), *GetName());
+	Super::NotifyActorOnInputTouchEnter(FingerIndex);
+}
+
+void AChessActor::NotifyActorOnInputTouchLeave(const ETouchIndex::Type FingerIndex)
+{
+	GCE_LOG(Log, TEXT("Name [%s]"), *GetName());
+	Super::NotifyActorOnInputTouchLeave(FingerIndex);
 }
 
 // Called every frame

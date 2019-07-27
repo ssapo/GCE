@@ -26,7 +26,6 @@ public:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	virtual void Logout(AController* Exiting) override;
-
 protected:
 	virtual void BeginPlay() override;
 
@@ -37,4 +36,10 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Map", Meta = (AllowPrivateAccess = true))
 		TMap<EChessActor, UClass*> ChessActors;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Map", Meta = (AllowPrivateAccess = true))
+		FVector StartInitializeLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Map", Meta = (AllowPrivateAccess = true))
+		FVector StartIntervalLocation;
 };

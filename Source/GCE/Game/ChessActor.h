@@ -17,6 +17,11 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void NotifyActorOnClicked(FKey ButtonPressed = EKeys::LeftMouseButton) override;
+	virtual void NotifyActorOnInputTouchBegin(const ETouchIndex::Type FingerIndex) override;
+	virtual void NotifyActorOnInputTouchEnd(const ETouchIndex::Type FingerIndex) override;
+	virtual void NotifyActorOnInputTouchEnter(const ETouchIndex::Type FingerIndex) override;
+	virtual void NotifyActorOnInputTouchLeave(const ETouchIndex::Type FingerIndex) override;
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "ChessPiece")
