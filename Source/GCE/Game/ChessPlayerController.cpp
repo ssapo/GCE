@@ -2,8 +2,19 @@
 
 
 #include "ChessPlayerController.h"
+#include "ChessActor.h"
 
 TWeakObjectPtr<AChessPlayerController> AChessPlayerController::LocalPC;
+
+AChessPlayerController* const AChessPlayerController::GetLocalPC()
+{
+	if (LocalPC.IsValid())
+	{
+		return LocalPC.Get();
+	}
+
+	return nullptr;
+}
 
 AChessPlayerController::AChessPlayerController()
 {
@@ -39,5 +50,18 @@ void AChessPlayerController::RestartLevel()
 void AChessPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	GCE_LOG_S(Log);
+}
+
+void AChessPlayerController::ChangeCurrentClickedActor(AChessActor* ClickedActor)
+{
+	if (CurrentClickedActor.IsValid())
+	{
+		CurrentClickedActor->SetOutlineEffect(false);
+	}
+
+	CurrentClickedActor = ClickedActor;
+	CurrentClickedActor->SetOutlineEffect(true);
+
 	GCE_LOG_S(Log);
 }

@@ -17,11 +17,16 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
 	virtual void NotifyActorOnClicked(FKey ButtonPressed = EKeys::LeftMouseButton) override;
 	virtual void NotifyActorOnInputTouchBegin(const ETouchIndex::Type FingerIndex) override;
 	virtual void NotifyActorOnInputTouchEnd(const ETouchIndex::Type FingerIndex) override;
 	virtual void NotifyActorOnInputTouchEnter(const ETouchIndex::Type FingerIndex) override;
 	virtual void NotifyActorOnInputTouchLeave(const ETouchIndex::Type FingerIndex) override;
+	
+
+	UFUNCTION()
+		void SetOutlineEffect(bool bToggle);
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "ChessPiece")
@@ -33,4 +38,7 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessPiece", Meta = (AllowPrivateAccess = true))
 		class UMeshComponent* ChessBody;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessPiece", Meta = (AllowPrivateAccess = true))
+		bool bOutlineEffect;
 };

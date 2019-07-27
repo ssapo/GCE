@@ -5,6 +5,7 @@
 #include <Engine/StaticMesh.h>
 #include <Components/StaticMeshComponent.h>
 #include <GameFramework/MovementComponent.h>
+#include "ChessPlayerController.h"
 
 // Sets default values
 AChessActor::AChessActor()
@@ -12,13 +13,21 @@ AChessActor::AChessActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	GCE_LOG_S(Log);
 	PrimaryActorTick.bCanEverTick = true;
+	bOutlineEffect = true;
 }
 
 void AChessActor::InitChessActor(class UMeshComponent* Piece)
 {
 	GCE_CHECK(nullptr != Piece);
-
 	ChessBody = Piece;
+}
+
+void AChessActor::SetOutlineEffect(bool bToggle)
+{
+	if (ChessBody)
+	{
+		ChessBody->SetRenderCustomDepth(bOutlineEffect && bToggle);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -32,6 +41,11 @@ void AChessActor::NotifyActorOnClicked(FKey ButtonPressed)
 {
 	GCE_LOG(Log, TEXT("Name [%s] Key [%s]"), *GetName(), *ButtonPressed.ToString());
 	Super::NotifyActorOnClicked(ButtonPressed);
+
+	if (AChessPlayerController* PC = AChessPlayerController::GetLocalPC())
+	{
+		PC->ChangeCurrentClickedActor(this);
+	}
 }
 
 void AChessActor::NotifyActorOnInputTouchBegin(const ETouchIndex::Type FingerIndex)
