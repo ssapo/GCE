@@ -4,18 +4,6 @@
 #include "ChessPlayerController.h"
 #include "ChessActor.h"
 
-TWeakObjectPtr<AChessPlayerController> AChessPlayerController::LocalPC;
-
-AChessPlayerController* const AChessPlayerController::GetLocalPC()
-{
-	if (LocalPC.IsValid())
-	{
-		return LocalPC.Get();
-	}
-
-	return nullptr;
-}
-
 AChessPlayerController::AChessPlayerController()
 {
 	GCE_LOG_S(Log);
@@ -31,8 +19,6 @@ void AChessPlayerController::ReceivedPlayer()
 {
 	Super::ReceivedPlayer();
 	GCE_LOG_S(Log);
-
-	LocalPC = this;
 }
 
 void AChessPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)

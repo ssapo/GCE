@@ -3,37 +3,36 @@
 #pragma once
 
 #include "GCE.h"
-#include "GameFramework/GameModeBase.h"
+#include "GameFramework/GameMode.h"
 #include "ChessGameModeBase.generated.h"
 
 UCLASS()
-class GCE_API AChessGameModeBase : public AGameModeBase
+class GCE_API AChessGameMode : public AGameMode
 {
 	GENERATED_BODY()
 
 public: 
-	AChessGameModeBase();
+	AChessGameMode();
 
 public:
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 
 	virtual void StartPlay() override;
-
-	virtual void PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
-
-	virtual APlayerController* Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
-
-	virtual void PostLogin(APlayerController* NewPlayer) override;
-
-	virtual void Logout(AController* Exiting) override;
-
-protected:
-	virtual void BeginPlay() override;
+	void OnSelectedChessActor(class AChessActor* const ChessActor);
 
 private:
 
 	UPROPERTY()
-		TArray<int32> ChessMap;
+		TArray<int32> ChessGameMap;
+
+	UPROPERTY()
+		TArray<TWeakObjectPtr<class AChessActor>> ChessMoveMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Map", Meta = (AllowPrivateAccess = true))
+		UClass* SelectableActorClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Map", Meta = (AllowPrivateAccess = true))
+		UClass* ChessBoardClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Map", Meta = (AllowPrivateAccess = true))
 		TMap<EChessActor, UClass*> ChessActors;
@@ -43,4 +42,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Map", Meta = (AllowPrivateAccess = true))
 		FVector StartIntervalLocation;
+
+	TWeakObjectPtr<class AChessPlayerController> ChessPlayerController;
 };

@@ -16,8 +16,6 @@ class GCE_API AChessPlayerController : public APlayerController
 	GENERATED_BODY()
 
 public:
-	static AChessPlayerController* const GetLocalPC();
-
 	AChessPlayerController();
 
 	virtual void ReceivedPlayer() override;
@@ -28,8 +26,6 @@ public:
 	void ChangeCurrentClickedActor(class AChessActor* ClickedActor);
 
 private:
-	static TWeakObjectPtr<AChessPlayerController> LocalPC;
-
 	UPROPERTY()
 		TWeakObjectPtr<class AChessActor> CurrentClickedActor;
 };

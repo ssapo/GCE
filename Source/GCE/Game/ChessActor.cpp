@@ -6,6 +6,8 @@
 #include <Components/StaticMeshComponent.h>
 #include <GameFramework/MovementComponent.h>
 #include "ChessPlayerController.h"
+#include "ChessGameModeBase.h"
+#include "ChessMoverComponent.h"
 
 // Sets default values
 AChessActor::AChessActor()
@@ -14,6 +16,11 @@ AChessActor::AChessActor()
 	GCE_LOG_S(Log);
 	PrimaryActorTick.bCanEverTick = true;
 	bOutlineEffect = true;
+	bEnableSelected = true;
+	bVisiblityToggled = true;
+
+	ChessBody = nullptr;
+	ChessMover = nullptr;
 }
 
 void AChessActor::InitChessActor(class UMeshComponent* Piece)
@@ -22,11 +29,91 @@ void AChessActor::InitChessActor(class UMeshComponent* Piece)
 	ChessBody = Piece;
 }
 
+bool AChessActor::IsValidMover()
+{
+	return ChessMover != nullptr;
+}
+
+void AChessActor::SetCellXY(int32 NewX, int32 NewY)
+{
+	if (ChessMover)
+	{
+		ChessMover->SetCellXY(NewX, NewY);
+	}
+}
+
+void AChessActor::SetCellPoint(const FIntPoint& Point)
+{
+	if (ChessMover)
+	{
+		ChessMover->SetCellPoint(Point);
+	}
+}
+
+void AChessActor::SetCellX(int32 NewX)
+{
+	if (ChessMover)
+	{
+		ChessMover->SetCellX(NewX);
+	}
+}
+
+void AChessActor::SetCellY(int32 NewY)
+{
+	if (ChessMover)
+	{
+		ChessMover->SetCellY(NewY);
+	}
+}
+
+FIntPoint AChessActor::GetCell() const
+{
+	if (ChessMover)
+	{
+		return ChessMover->GetCell();
+	}
+
+	return FIntPoint::NoneValue;
+}
+
+int32 AChessActor::GetCellX() const
+{
+	if (ChessMover)
+	{
+		return ChessMover->GetCellX();
+	}
+
+	return INDEX_NONE;
+}
+
+int32 AChessActor::GetCellY() const
+{
+	if (ChessMover)
+	{
+		return ChessMover->GetCellY();
+	}
+
+	return INDEX_NONE;
+}
+
 void AChessActor::SetOutlineEffect(bool bToggle)
 {
 	if (ChessBody)
 	{
 		ChessBody->SetRenderCustomDepth(bOutlineEffect && bToggle);
+	}
+}
+
+void AChessActor::SetVisiblity(bool bToggle)
+{
+	if (bVisiblityToggled != bToggle)
+	{
+		bVisiblityToggled = bToggle;
+
+		if (ChessBody)
+		{
+			ChessBody->SetVisibility(bVisiblityToggled);
+		}
 	}
 }
 
@@ -39,12 +126,12 @@ void AChessActor::BeginPlay()
 
 void AChessActor::NotifyActorOnClicked(FKey ButtonPressed)
 {
-	GCE_LOG(Log, TEXT("Name [%s] Key [%s]"), *GetName(), *ButtonPressed.ToString());
 	Super::NotifyActorOnClicked(ButtonPressed);
 
-	if (AChessPlayerController* PC = AChessPlayerController::GetLocalPC())
+	if (bEnableSelected && bVisiblityToggled)
 	{
-		PC->ChangeCurrentClickedActor(this);
+		GCE_LOG(Log, TEXT("Name [%s] Key [%s]"), *GetName(), *ButtonPressed.ToString());
+		OnSelected.Broadcast(this);
 	}
 }
 

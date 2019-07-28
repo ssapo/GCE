@@ -4,14 +4,18 @@
 #include "ChessGameModeBase.h"
 #include "ChessPlayerController.h"
 #include "ChessActor.h"
+#include "ChessGameState.h"
+#include "ChessPlayerState.h"
 
-AChessGameModeBase::AChessGameModeBase()
+AChessGameMode::AChessGameMode()
 {
 	GCE_LOG_S(Log);
 
 	PlayerControllerClass = AChessPlayerController::StaticClass();
+	PlayerStateClass = AChessPlayerState::StaticClass();
+	GameStateClass = AChessGameState::StaticClass();
 
-	ChessMap = {
+	ChessGameMap = {
 		4,	3,	5,	6,	7,	5, 3, 4,
 		2,	2,	2,	2,	2,	2, 2, 2,
 		0,  0,  0,  0,  0,  0, 0, 0,
@@ -21,30 +25,56 @@ AChessGameModeBase::AChessGameModeBase()
 		8,	8,	8,	8,	8,	8, 8, 8,
 		10, 9, 11, 12, 13, 11, 9, 10,
 	};
-	
+
 	StartInitializeLocation = FVector(-350.0f, -350.0f, 50.0f);
 	StartIntervalLocation = FVector(100.0f, 100.0f, 0.0f);
 }
 
-void AChessGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+void AChessGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	GCE_LOG_S(Log);
 	Super::InitGame(MapName, Options, ErrorMessage);
 	GCE_LOG(Log, TEXT("%s%s%s"), *MapName, *Options, *ErrorMessage);
 }
 
-void AChessGameModeBase::StartPlay()
+void AChessGameMode::StartPlay()
 {
 	Super::StartPlay();
-	GCE_LOG_S(Log);
 
-	auto BoardClass = ChessActors[EChessActor::Marble_Board];
-	if (BoardClass)
+	if (ChessBoardClass)
 	{
-		GetWorld()->SpawnActor<AChessActor>(BoardClass);
+		if (AChessActor* Board = GetWorld()->SpawnActor<AChessActor>(ChessBoardClass))
+		{
+		}
 	}
 
-	if (ChessActors.Num() > 0)
+	TArray<int32> CopiedMap = ChessGameMap;
+
+	// 체스 이동 타일
+	{
+		float IX = StartIntervalLocation.X;
+		float IY = StartIntervalLocation.Y;
+		if (SelectableActorClass)
+		{
+			for (int y = 0; y < 8; ++y)
+			{
+				for (int x = 0; x < 8; ++x)
+				{
+					FVector NewLocation = StartInitializeLocation + FVector(x * IX, y * IY, 0.0f);
+					if (AChessActor * Actor = GetWorld()->SpawnActor<AChessActor>(SelectableActorClass,
+						NewLocation, FRotator::ZeroRotator))
+					{
+						Actor->SetCellXY(x, y);
+						Actor->SetVisiblity(false);
+						Actor->OnSelected.AddUObject(this, &AChessGameMode::OnSelectedChessActor);
+						ChessMoveMap.Add(Actor);
+					}
+				}
+			}
+		}
+	}
+
+	// 체스 맵
 	{
 		float IX = StartIntervalLocation.X;
 		float IY = StartIntervalLocation.Y;
@@ -53,48 +83,61 @@ void AChessGameModeBase::StartPlay()
 			for (int x = 0; x < 8; ++x)
 			{
 				FVector NewLocation = StartInitializeLocation + FVector(x * IX, y * IY, 0.0f);
-				EChessActor Key = EChessActor(ChessMap[y * 8 + x]);
+				EChessActor Key = EChessActor(CopiedMap[y * 8 + x]);
 				if (Key != EChessActor::NONE)
 				{
-					auto BoardClass = ChessActors[Key];
-					if (BoardClass)
+					if (UClass* BoardClass = ChessActors[Key])
 					{
-						GetWorld()->SpawnActor<AChessActor>(BoardClass, NewLocation, FRotator::ZeroRotator);
+						if (AChessActor* Actor = GetWorld()->SpawnActor<AChessActor>(BoardClass,
+							NewLocation, FRotator::ZeroRotator))
+						{
+							Actor->SetCellXY(x, y);
+							Actor->SetVisiblity(true);
+							Actor->OnSelected.AddUObject(this, &AChessGameMode::OnSelectedChessActor);
+						}
 					}
 				}
 			}
 		}
 	}
+
+	if (AChessPlayerController* PC = GetWorld()->GetFirstPlayerController<AChessPlayerController>())
+	{
+		ChessPlayerController = PC;
+	}
 }
 
-void AChessGameModeBase::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
+void AChessGameMode::OnSelectedChessActor(class AChessActor* const ChessActor)
 {
-	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
-	GCE_LOG_S(Log);
+	if (ChessActor->IsA(SelectableActorClass))
+	{
+		if (ChessPlayerController.IsValid())
+		{
+			ChessPlayerController->ChangeCurrentClickedActor(ChessActor);
+
+			for (const auto& Each : ChessMoveMap)
+			{
+				if (Each.IsValid())
+				{
+					Each->SetVisiblity(false);
+				}
+			}
+		}
+	}
+	else
+	{
+		if (ChessPlayerController.IsValid())
+		{
+			ChessPlayerController->ChangeCurrentClickedActor(ChessActor);
+
+			//ChessActor->GetCell();
+			for (const auto& Each : ChessMoveMap)
+			{
+				if (Each.IsValid())
+				{
+					Each->SetVisiblity(true);
+				}
+			}
+		}
+	}
 }
-
-APlayerController* AChessGameModeBase::Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
-{
-	GCE_LOG_S(Log);
-	return Super::Login(NewPlayer, InRemoteRole, Portal, Options, UniqueId, ErrorMessage);
-}
-
-void AChessGameModeBase::PostLogin(APlayerController* NewPlayer)
-{
-	Super::PostLogin(NewPlayer);
-	GCE_LOG_S(Log);
-}
-
-void AChessGameModeBase::Logout(AController* Exiting)
-{
-	Super::Logout(Exiting);
-	GCE_LOG_S(Log);
-}
-
-void AChessGameModeBase::BeginPlay()
-{
-	Super::BeginPlay();
-	GCE_LOG_S(Log);
-
-}
-
