@@ -15,7 +15,7 @@ AChessGameMode::AChessGameMode()
 	PlayerStateClass = AChessPlayerState::StaticClass();
 	GameStateClass = AChessGameState::StaticClass();
 
-	ChessGameMap = {
+	ChessStartMap = {
 		4,	3,	5,	6,	7,	5, 3, 4,
 		2,	2,	2,	2,	2,	2, 2, 2,
 		0,  0,  0,  0,  0,  0, 0, 0,
@@ -48,25 +48,23 @@ void AChessGameMode::StartPlay()
 		}
 	}
 
-	TArray<int32> CopiedMap = ChessGameMap;
-
 	// 체스 이동 타일
 	{
-		float IX = StartIntervalLocation.X;
-		float IY = StartIntervalLocation.Y;
-		if (SelectableActorClass)
+		if (MovePieceClass)
 		{
 			for (int y = 0; y < 8; ++y)
 			{
 				for (int x = 0; x < 8; ++x)
 				{
-					FVector NewLocation = StartInitializeLocation + FVector(x * IX, y * IY, 0.0f);
-					if (AChessActor * Actor = GetWorld()->SpawnActor<AChessActor>(SelectableActorClass,
+					FVector NewLocation = StartInitializeLocation;
+					if (AChessActor * Actor = GetWorld()->SpawnActor<AChessActor>(MovePieceClass,
 						NewLocation, FRotator::ZeroRotator))
 					{
+						Actor->SetIntervalVector(StartIntervalLocation);
 						Actor->SetCellXY(x, y);
 						Actor->SetVisiblity(false);
 						Actor->OnSelected.AddUObject(this, &AChessGameMode::OnSelectedChessActor);
+
 						ChessMoveMap.Add(Actor);
 					}
 				}
@@ -76,14 +74,12 @@ void AChessGameMode::StartPlay()
 
 	// 체스 맵
 	{
-		float IX = StartIntervalLocation.X;
-		float IY = StartIntervalLocation.Y;
 		for (int y = 0; y < 8; ++y)
 		{
 			for (int x = 0; x < 8; ++x)
 			{
-				FVector NewLocation = StartInitializeLocation + FVector(x * IX, y * IY, 0.0f);
-				EChessActor Key = EChessActor(CopiedMap[y * 8 + x]);
+				FVector NewLocation = StartInitializeLocation;
+				EChessActor Key = EChessActor(ChessStartMap[y * 8 + x]);
 				if (Key != EChessActor::NONE)
 				{
 					if (UClass* BoardClass = ChessActors[Key])
@@ -91,11 +87,17 @@ void AChessGameMode::StartPlay()
 						if (AChessActor* Actor = GetWorld()->SpawnActor<AChessActor>(BoardClass,
 							NewLocation, FRotator::ZeroRotator))
 						{
+							Actor->SetIntervalVector(StartIntervalLocation);
 							Actor->SetCellXY(x, y);
 							Actor->SetVisiblity(true);
 							Actor->OnSelected.AddUObject(this, &AChessGameMode::OnSelectedChessActor);
+
+							ChessGameMap.Add(Actor);
+							continue;
 						}
 					}
+
+					ChessGameMap.Add(nullptr);
 				}
 			}
 		}
@@ -107,19 +109,30 @@ void AChessGameMode::StartPlay()
 	}
 }
 
-void AChessGameMode::OnSelectedChessActor(class AChessActor* const ChessActor)
+void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
 {
-	if (ChessActor->IsA(SelectableActorClass))
+	if (ChessActor->IsA(MovePieceClass))
 	{
 		if (ChessPlayerController.IsValid())
 		{
-			ChessPlayerController->ChangeCurrentClickedActor(ChessActor);
 
-			for (const auto& Each : ChessMoveMap)
+			if (AChessActor* CurrActor = ChessPlayerController->GetCurrentClickedActor())
 			{
-				if (Each.IsValid())
+				FIntPoint NewPoint = ChessActor->GetCell();
+
+				if (AChessActor* AttackedPiece = ChessGameMap[NewPoint.Y * 8 + NewPoint.X])
 				{
-					Each->SetVisiblity(false);
+				}
+					
+				CurrActor->SetCellPoint(NewPoint);
+			}
+			ChessPlayerController->ChangeCurrentClickedActor(nullptr);
+
+			for (const auto& e : ChessMoveMap)
+			{
+				if (e.IsValid())
+				{
+					e->SetVisiblity(false);
 				}
 			}
 		}
@@ -130,12 +143,24 @@ void AChessGameMode::OnSelectedChessActor(class AChessActor* const ChessActor)
 		{
 			ChessPlayerController->ChangeCurrentClickedActor(ChessActor);
 
-			//ChessActor->GetCell();
-			for (const auto& Each : ChessMoveMap)
+			FIntPoint CurrPosition = ChessActor->GetCell();
+			TArray<FIntPoint> Directions = ChessActor->GetDirections();
+
+			for (const auto& e : ChessMoveMap)
 			{
-				if (Each.IsValid())
+				if (e.IsValid())
 				{
-					Each->SetVisiblity(true);
+					e->SetVisiblity(false);
+				}
+			}
+
+			for (const FIntPoint& e : Directions)
+			{
+				FIntPoint CE = CurrPosition + e;
+				TWeakObjectPtr<AChessActor> MovePieceActor = ChessMoveMap[CE.Y * 8 + CE.X];
+				if (MovePieceActor.IsValid())
+				{
+					MovePieceActor->SetVisiblity(true);
 				}
 			}
 		}

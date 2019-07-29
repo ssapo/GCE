@@ -24,6 +24,7 @@ public:
 	virtual void BeginPlay() override;
 
 	void ChangeCurrentClickedActor(class AChessActor* ClickedActor);
+	class AChessActor* GetCurrentClickedActor() const;
 
 private:
 	UPROPERTY()

@@ -47,7 +47,18 @@ void AChessPlayerController::ChangeCurrentClickedActor(AChessActor* ClickedActor
 	}
 
 	CurrentClickedActor = ClickedActor;
-	CurrentClickedActor->SetOutlineEffect(true);
+	if (nullptr != CurrentClickedActor)
+	{
+		CurrentClickedActor->SetOutlineEffect(true);
+	}
+}
 
-	GCE_LOG_S(Log);
+AChessActor* AChessPlayerController::GetCurrentClickedActor() const
+{
+	if (CurrentClickedActor.IsValid())
+	{
+		return CurrentClickedActor.Get();
+	}
+
+	return nullptr;
 }

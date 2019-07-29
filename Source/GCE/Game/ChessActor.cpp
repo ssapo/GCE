@@ -23,15 +23,24 @@ AChessActor::AChessActor()
 	ChessMover = nullptr;
 }
 
-void AChessActor::InitChessActor(class UMeshComponent* Piece)
+void AChessActor::InitChessActor(class UMeshComponent* Piece, class UChessMoverComponent* Mover)
 {
 	GCE_CHECK(nullptr != Piece);
 	ChessBody = Piece;
+	ChessMover = Mover;
 }
 
 bool AChessActor::IsValidMover()
 {
 	return ChessMover != nullptr;
+}
+
+void AChessActor::SetIntervalVector(const FVector& Value)
+{
+	if (ChessMover)
+	{
+		ChessMover->SetIntervalVector(Value);
+	}
 }
 
 void AChessActor::SetCellXY(int32 NewX, int32 NewY)
@@ -64,6 +73,16 @@ void AChessActor::SetCellY(int32 NewY)
 	{
 		ChessMover->SetCellY(NewY);
 	}
+}
+
+TArray<FIntPoint> AChessActor::GetDirections() const
+{
+	if (ChessMover)
+	{
+		return ChessMover->GetDirections();
+	}
+
+	return TArray<FIntPoint>();
 }
 
 FIntPoint AChessActor::GetCell() const

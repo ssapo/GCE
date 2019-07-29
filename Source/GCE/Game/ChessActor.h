@@ -30,6 +30,9 @@ public:
 		bool IsValidMover();
 
 	UFUNCTION(BlueprintCallable)
+		void SetIntervalVector(const FVector& Value);
+
+	UFUNCTION(BlueprintCallable)
 		void SetCellXY(int32 NewX, int32 NewY);
 
 	UFUNCTION(BlueprintCallable)
@@ -40,6 +43,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void SetCellY(int32 NewY);
+
+	UFUNCTION(BlueprintPure)
+		TArray<FIntPoint> GetDirections() const;
 
 	UFUNCTION(BlueprintPure)
 		FIntPoint GetCell() const;
@@ -58,7 +64,7 @@ public:
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "ChessPiece")
-		void InitChessActor(class UMeshComponent* Piece);
+		void InitChessActor(class UMeshComponent* Piece, class UChessMoverComponent* Mover);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

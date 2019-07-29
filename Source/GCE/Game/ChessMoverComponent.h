@@ -7,36 +7,49 @@
 #include "ChessMoverComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class GCE_API UChessMoverComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
+public:
 	UChessMoverComponent();
 
 	UFUNCTION(BlueprintCallable)
-		void SetCellPoint(const FIntPoint& NewP) { CellPoint = NewP; }
+		void SetCellPoint(const FIntPoint& NewP);
 
 	UFUNCTION(BlueprintCallable)
-		void SetCellXY(int32 NewX, int32 NewY) { CellPoint.X = NewX; CellPoint.Y = NewY; }
+		void SetCellXY(int32 NewX, int32 NewY);
 
 	UFUNCTION(BlueprintCallable)
-		void SetCellX(int32 NewX) { CellPoint.X = NewX; }
+		void SetCellX(int32 NewX);
 
 	UFUNCTION(BlueprintCallable)
-		void SetCellY(int32 NewY) { CellPoint.Y = NewY; }
+		void SetCellY(int32 NewY);
 
 	UFUNCTION(BlueprintPure)
-		FIntPoint GetCell() const { return CellPoint; }
+		TArray<FIntPoint> GetDirections() const { return Directions; }
 
 	UFUNCTION(BlueprintPure)
-		int32 GetCellX() const { return CellPoint.X; }
+		FIntPoint GetCell() const { return CurrentPoint; }
 
 	UFUNCTION(BlueprintPure)
-		int32 GetCellY() const { return CellPoint.Y; }
+		int32 GetCellX() const { return CurrentPoint.X; }
+
+	UFUNCTION(BlueprintPure)
+		int32 GetCellY() const { return CurrentPoint.Y; }
+
+	UFUNCTION(BlueprintPure)
+		void SetIntervalVector(const FVector& Value) { IntervalVector = Value; }
 
 private:
-	FIntPoint CellPoint;
+	FIntPoint CurrentPoint;
+
+	FVector IntervalVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mover|Direction", Meta = (AllowPrivateAccess = true))
+		TArray<FIntPoint> Directions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mover|Direction", Meta = (AllowPrivateAccess = true))
+		bool bPercistance;
 };

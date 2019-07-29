@@ -23,13 +23,16 @@ public:
 private:
 
 	UPROPERTY()
-		TArray<int32> ChessGameMap;
+		TArray<int32> ChessStartMap;
+
+	UPROPERTY()
+		TArray<class AChessActor*> ChessGameMap;
 
 	UPROPERTY()
 		TArray<TWeakObjectPtr<class AChessActor>> ChessMoveMap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Map", Meta = (AllowPrivateAccess = true))
-		UClass* SelectableActorClass;
+		UClass* MovePieceClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Map", Meta = (AllowPrivateAccess = true))
 		UClass* ChessBoardClass;
