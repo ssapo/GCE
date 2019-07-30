@@ -52,9 +52,9 @@ void AChessGameMode::StartPlay()
 	{
 		if (MovePieceClass)
 		{
-			for (int y = 0; y < 8; ++y)
+			for (int y = 0; y < CHESS_HEIGHT; ++y)
 			{
-				for (int x = 0; x < 8; ++x)
+				for (int x = 0; x < CHESS_WIDTH; ++x)
 				{
 					FVector NewLocation = StartInitializeLocation;
 					if (AChessActor * Actor = GetWorld()->SpawnActor<AChessActor>(MovePieceClass,
@@ -74,12 +74,12 @@ void AChessGameMode::StartPlay()
 
 	// Ã¼½º ¸Ê
 	{
-		for (int y = 0; y < 8; ++y)
+		for (int y = 0; y < CHESS_HEIGHT; ++y)
 		{
-			for (int x = 0; x < 8; ++x)
+			for (int x = 0; x < CHESS_WIDTH; ++x)
 			{
 				FVector NewLocation = StartInitializeLocation;
-				EChessActor Key = EChessActor(ChessStartMap[y * 8 + x]);
+				EChessActor Key = EChessActor(ChessStartMap[y * CHESS_WIDTH + x]);
 				if (Key != EChessActor::NONE)
 				{
 					if (UClass* BoardClass = ChessActors[Key])
@@ -115,12 +115,11 @@ void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
 	{
 		if (ChessPlayerController.IsValid())
 		{
-
 			if (AChessActor* CurrActor = ChessPlayerController->GetCurrentClickedActor())
 			{
 				FIntPoint NewPoint = ChessActor->GetCell();
 
-				if (AChessActor* AttackedPiece = ChessGameMap[NewPoint.Y * 8 + NewPoint.X])
+				if (AChessActor* const AttackedPiece = GetChessPieceFromMap(NewPoint))
 				{
 				}
 					
@@ -154,15 +153,67 @@ void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
 				}
 			}
 
+			bool bPersistance = ChessActor->IsPersistance();
 			for (const FIntPoint& e : Directions)
 			{
-				FIntPoint CE = CurrPosition + e;
-				TWeakObjectPtr<AChessActor> MovePieceActor = ChessMoveMap[CE.Y * 8 + CE.X];
-				if (MovePieceActor.IsValid())
+				FIntPoint NextPosition = CurrPosition;
+				do
 				{
-					MovePieceActor->SetVisiblity(true);
-				}
+					NextPosition += e;
+					if (AChessActor * const MoverPieceActor = GetMoverPieceFromMap(NextPosition))
+					{
+						if (MoverPieceActor->GetVisiblity())
+						{
+							bPersistance = false;
+						}
+						else
+						{
+							if (AChessActor * const ChessPiece = GetChessPieceFromMap(NextPosition))
+							{
+								MoverPieceActor->SetVisiblity(false);
+
+								bPersistance = false;
+							}
+							else
+							{
+								MoverPieceActor->SetVisiblity(true);
+							}
+						}
+					}
+					else
+					{
+						bPersistance = false;
+					}
+				} while (bPersistance);
+
 			}
 		}
 	}
+}
+
+AChessActor* AChessGameMode::GetMoverPieceFromMap(const FIntPoint& Point) const
+{
+	if (0 <= Point.X && CHESS_WIDTH > Point.X && 0 <= Point.Y && CHESS_HEIGHT > Point.Y)
+	{
+		auto WeakPtr = ChessMoveMap[Point.Y * CHESS_WIDTH + Point.X];
+		if (WeakPtr.IsValid())
+		{
+			return WeakPtr.Get();
+		}
+	}
+
+	return nullptr;
+}
+
+AChessActor* AChessGameMode::GetChessPieceFromMap(const FIntPoint& Point) const
+{
+	if (0 <= Point.X && CHESS_WIDTH > Point.X && 0 <= Point.Y && CHESS_HEIGHT > Point.Y)
+	{
+		auto WeakPtr = ChessGameMap[Point.Y * CHESS_WIDTH + Point.X];
+		if (WeakPtr.IsValid())
+		{
+			return WeakPtr.Get();
+		}
+	}
+	return nullptr;
 }

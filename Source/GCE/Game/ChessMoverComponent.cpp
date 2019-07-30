@@ -7,7 +7,7 @@
 // Sets default values for this component's properties
 UChessMoverComponent::UChessMoverComponent()
 {
-	CurrentPoint = FIntPoint::NoneValue;
+	CurrentPoint = FIntPoint::ZeroValue;
 
 	bPercistance = false;
 }
@@ -16,12 +16,12 @@ void UChessMoverComponent::SetCellXY(int32 NewX, int32 NewY)
 {
 	FVector NewLocation = GetOwner()->GetActorLocation();
 
+	float MomvmentX = (NewX - CurrentPoint.X) * IntervalVector.X;
+	float MovementY = (NewY - CurrentPoint.Y) * IntervalVector.Y;
 	CurrentPoint.X = NewX;
 	CurrentPoint.Y = NewY;
-	float MomvmentX = CurrentPoint.X * IntervalVector.X;
-	float MovementY = CurrentPoint.Y * IntervalVector.Y;
 
-	NewLocation = FVector(NewLocation.X + MomvmentX, NewLocation.Y + MovementY, 0.0f);
+	NewLocation = FVector(NewLocation.X + MomvmentX, NewLocation.Y + MovementY, NewLocation.Z);
 	GetOwner()->SetActorLocation(NewLocation);
 }
 

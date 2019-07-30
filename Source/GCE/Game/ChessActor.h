@@ -62,6 +62,21 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SetVisiblity(bool bToggle);
 
+	UFUNCTION(BlueprintPure)
+		bool GetVisiblity() const { return bVisiblityToggled; }
+
+	UFUNCTION(BlueprintCallable)
+		bool IsSameTeamWith(const AChessActor* const Actor) const { return ChessTeamType == Actor->ChessTeamType; }
+
+	UFUNCTION(BlueprintCallable)
+		bool IsOtherTeamWith(const AChessActor* const Actor) const { return ChessTeamType != Actor->ChessTeamType; }
+
+	UFUNCTION(BlueprintCallable)
+		bool IsNoneTeam() const { return ChessTeamType != EChessTeam::NONE; }
+
+	UFUNCTION(BlueprintCallable)
+		bool IsPersistance() const;
+
 protected:
 	UFUNCTION(BlueprintCallable, Category = "ChessPiece")
 		void InitChessActor(class UMeshComponent* Piece, class UChessMoverComponent* Mover);
@@ -78,6 +93,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessPiece", Meta = (AllowPrivateAccess = true))
 		class UChessMoverComponent* ChessMover;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessTeam", Meta = (AllowPrivateAccess = true))
+		EChessTeam ChessTeamType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessPiece", Meta = (AllowPrivateAccess = true))
 		bool bOutlineEffect;

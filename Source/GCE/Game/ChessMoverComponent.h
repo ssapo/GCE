@@ -27,6 +27,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void SetCellY(int32 NewY);
 
+	UFUNCTION(BlueprintCallable)
+		void SetIntervalVector(const FVector& Value) { IntervalVector = Value; }
+
 	UFUNCTION(BlueprintPure)
 		TArray<FIntPoint> GetDirections() const { return Directions; }
 
@@ -40,7 +43,7 @@ public:
 		int32 GetCellY() const { return CurrentPoint.Y; }
 
 	UFUNCTION(BlueprintPure)
-		void SetIntervalVector(const FVector& Value) { IntervalVector = Value; }
+		bool IsPercistance() const { return bPercistance; }
 
 private:
 	FIntPoint CurrentPoint;

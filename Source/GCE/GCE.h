@@ -37,3 +37,12 @@ enum class EChessActor : uint8
 	Black_King		UMETA(DisplayName = "Black King"),
 	Black_Queen		UMETA(DisplayName = "Black Queen"),
 };
+
+
+UENUM(BlueprintType)
+enum class EChessTeam : uint8
+{
+	NONE			UMETA(DisplayName = "NONE"),
+	White			UMETA(DisplayName = "White"),
+	Black			UMETA(DisplayName = "Black"),
+};

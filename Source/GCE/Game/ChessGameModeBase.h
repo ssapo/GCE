@@ -14,19 +14,24 @@ class GCE_API AChessGameMode : public AGameMode
 public: 
 	AChessGameMode();
 
-public:
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 
 	virtual void StartPlay() override;
 	void OnSelectedChessActor(class AChessActor* const ChessActor);
 
 private:
+	class AChessActor* GetMoverPieceFromMap(const FIntPoint& Point) const;
+	class AChessActor* GetChessPieceFromMap(const FIntPoint& Point) const;
+
+	static constexpr int32 CHESS_WIDTH = 8;
+	static constexpr int32 CHESS_HEIGHT = 8;
+private:
 
 	UPROPERTY()
 		TArray<int32> ChessStartMap;
 
 	UPROPERTY()
-		TArray<class AChessActor*> ChessGameMap;
+		TArray<TWeakObjectPtr<class AChessActor>> ChessGameMap;
 
 	UPROPERTY()
 		TArray<TWeakObjectPtr<class AChessActor>> ChessMoveMap;

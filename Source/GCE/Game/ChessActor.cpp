@@ -123,6 +123,16 @@ void AChessActor::SetOutlineEffect(bool bToggle)
 	}
 }
 
+bool AChessActor::IsPersistance() const
+{
+	if (ChessMover)
+	{
+		return ChessMover->IsPercistance();
+	}
+
+	return false;
+}
+
 void AChessActor::SetVisiblity(bool bToggle)
 {
 	if (bVisiblityToggled != bToggle)
@@ -135,6 +145,8 @@ void AChessActor::SetVisiblity(bool bToggle)
 		}
 	}
 }
+
+
 
 // Called when the game starts or when spawned
 void AChessActor::BeginPlay()
