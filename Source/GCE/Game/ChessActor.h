@@ -72,7 +72,7 @@ public:
 		bool IsOtherTeamWith(const AChessActor* const Actor) const { return ChessTeamType != Actor->ChessTeamType; }
 
 	UFUNCTION(BlueprintCallable)
-		bool IsNoneTeam() const { return ChessTeamType != EChessTeam::NONE; }
+		bool IsNoneTeam() const { return ChessTeamType == EChessTeam::NONE; }
 
 	UFUNCTION(BlueprintCallable)
 		bool IsPersistance() const;

@@ -22,6 +22,7 @@ public:
 private:
 	class AChessActor* GetMoverPieceFromMap(const FIntPoint& Point) const;
 	class AChessActor* GetChessPieceFromMap(const FIntPoint& Point) const;
+	void SetChessPieceIntoMap(class AChessActor* Actor, const FIntPoint& Point);
 
 	static constexpr int32 CHESS_WIDTH = 8;
 	static constexpr int32 CHESS_HEIGHT = 8;
