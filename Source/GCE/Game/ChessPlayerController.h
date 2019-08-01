@@ -23,8 +23,18 @@ public:
 	virtual void RestartLevel() override;
 	virtual void BeginPlay() override;
 
-	void ChangeCurrentClickedActor(class AChessActor* ClickedActor);
-	class AChessActor* GetCurrentClickedActor() const;
+public:
+	UFUNCTION(BlueprintCallable)
+		void ChangeCurrentClickedActor(class AChessActor* ClickedActor);
+	
+	UFUNCTION(BlueprintPure)
+		class AChessActor* GetCurrentClickedActor() const;
+
+	UFUNCTION(BlueprintCallable)
+		void SetChoosenChessTeam(const EChessTeam& Team) { ChoosenChessTeam = Team; }
+
+	UFUNCTION(BlueprintPure)
+		EChessTeam GetChoosenChessTeam() const { return ChoosenChessTeam; }
 
 private:
 	UPROPERTY()

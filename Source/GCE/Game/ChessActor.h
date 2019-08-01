@@ -65,14 +65,8 @@ public:
 	UFUNCTION(BlueprintPure)
 		bool GetVisiblity() const { return bVisiblityToggled; }
 
-	UFUNCTION(BlueprintCallable)
-		bool IsSameTeamWith(const AChessActor* const Actor) const { return ChessTeamType == Actor->ChessTeamType; }
-
-	UFUNCTION(BlueprintCallable)
-		bool IsOtherTeamWith(const AChessActor* const Actor) const { return ChessTeamType != Actor->ChessTeamType; }
-
-	UFUNCTION(BlueprintCallable)
-		bool IsNoneTeam() const { return ChessTeamType == EChessTeam::NONE; }
+	UFUNCTION(BlueprintPure)
+		EChessTeam GetChessTeam() const { return ChessTeamType; }
 
 	UFUNCTION(BlueprintCallable)
 		bool IsPersistance() const;

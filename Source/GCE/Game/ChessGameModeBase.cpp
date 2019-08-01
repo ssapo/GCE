@@ -6,6 +6,7 @@
 #include "ChessActor.h"
 #include "ChessGameState.h"
 #include "ChessPlayerState.h"
+#include "ChessFuncs.h"
 
 AChessGameMode::AChessGameMode()
 {
@@ -119,6 +120,14 @@ void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
 		return;
 	}
 
+	if (ChessPlayerController.IsValid())
+	{
+		return;
+	}
+
+	auto PlayerTeam = ChessPlayerController->GetChoosenChessTeam();
+	auto SelectedActorTeam = ChessActor->GetChessTeam();
+
 	if (ChessActor->IsA(MovePieceClass))
 	{
 		if (ChessPlayerController.IsValid())
@@ -145,51 +154,47 @@ void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
 			}
 		}
 	}
-	else
+	else if(UChessFuncs::IsEqualTeam(PlayerTeam, SelectedActorTeam))
 	{
-		if (ChessPlayerController.IsValid())
+		ChessPlayerController->ChangeCurrentClickedActor(ChessActor);
+
+		FIntPoint CurrPosition = ChessActor->GetCell();
+		TArray<FIntPoint> Directions = ChessActor->GetDirections();
+
+		for (const auto& e : ChessMoveMap)
 		{
-			ChessPlayerController->ChangeCurrentClickedActor(ChessActor);
-
-			FIntPoint CurrPosition = ChessActor->GetCell();
-			TArray<FIntPoint> Directions = ChessActor->GetDirections();
-
-			for (const auto& e : ChessMoveMap)
+			if (e.IsValid())
 			{
-				if (e.IsValid())
-				{
-					e->SetVisiblity(false);
-				}
+				e->SetVisiblity(false);
 			}
-			
-			for (const FIntPoint& e : Directions)
+		}
+
+		for (const FIntPoint& e : Directions)
+		{
+			FIntPoint NextPosition = CurrPosition;
+			bool bPersistance = ChessActor->IsPersistance();
+			do
 			{
-				FIntPoint NextPosition = CurrPosition;
-				bool bPersistance = ChessActor->IsPersistance();
-				do
+				NextPosition += e;
+				if (AChessActor * MoverPieceActor = GetMoverPieceFromMap(NextPosition))
 				{
-					NextPosition += e;
-					if (AChessActor * MoverPieceActor = GetMoverPieceFromMap(NextPosition))
-					{
-						MoverPieceActor->SetVisiblity(true);
+					MoverPieceActor->SetVisiblity(true);
 
-						if (AChessActor* ChessPiece = GetChessPieceFromMap(NextPosition))
-						{
-							bPersistance = false;
-
-							if (false == ChessPiece->IsNoneTeam() && ChessPiece->IsSameTeamWith(ChessActor))
-							{
-								MoverPieceActor->SetVisiblity(false);
-							}
-						}
-					}
-					else
+					if (AChessActor * ChessPiece = GetChessPieceFromMap(NextPosition))
 					{
 						bPersistance = false;
-					}
-				} while (bPersistance);
 
-			}
+						if (UChessFuncs::IsEqualTeamBetweenTwoActors(ChessActor, ChessPiece))
+						{
+							MoverPieceActor->SetVisiblity(false);
+						}
+					}
+				}
+				else
+				{
+					bPersistance = false;
+				}
+			} while (bPersistance);
 		}
 	}
 }
