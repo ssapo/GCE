@@ -114,6 +114,11 @@ void AChessGameMode::StartPlay()
 
 void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
 {
+	if (nullptr == ChessActor)
+	{
+		return;
+	}
+
 	if (ChessActor->IsA(MovePieceClass))
 	{
 		if (ChessPlayerController.IsValid())

@@ -29,4 +29,7 @@ public:
 private:
 	UPROPERTY()
 		TWeakObjectPtr<class AChessActor> CurrentClickedActor;
+
+	UPROPERTY()
+		EChessTeam ChoosenChessTeam;
 };
