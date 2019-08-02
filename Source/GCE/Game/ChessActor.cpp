@@ -146,8 +146,6 @@ void AChessActor::SetVisiblity(bool bToggle)
 	}
 }
 
-
-
 // Called when the game starts or when spawned
 void AChessActor::BeginPlay()
 {

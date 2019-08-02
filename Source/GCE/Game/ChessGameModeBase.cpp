@@ -109,7 +109,7 @@ void AChessGameMode::StartPlay()
 
 	if (AChessPlayerController* PC = GetWorld()->GetFirstPlayerController<AChessPlayerController>())
 	{
-		ChessPlayerController = PC;
+		ChessPlayer = PC;
 	}
 }
 
@@ -120,83 +120,248 @@ void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
 		return;
 	}
 
-	if (ChessPlayerController.IsValid())
+	bool IsValid = ChessPlayer.IsValid();
+	if (!IsValid)
 	{
 		return;
 	}
 
-	auto PlayerTeam = ChessPlayerController->GetChoosenChessTeam();
-	auto SelectedActorTeam = ChessActor->GetChessTeam();
-
 	if (ChessActor->IsA(MovePieceClass))
 	{
-		if (ChessPlayerController.IsValid())
+		ProcessClickedMovePiece(ChessActor);
+	}
+	else
+	{
+		ProcessClickedChessPiece(ChessActor);
+	}
+}
+
+void AChessGameMode::ProcessClickedMovePiece(class AChessActor* const ChessActor)
+{
+	AChessActor* const CurrentIsNotNull = ChessPlayer->GetCurrentClickedActor();
+	if (nullptr == CurrentIsNotNull)
+	{
+		GCE_LOG(Error, TEXT("AChessGameMode::ProcessClickedMovePiece(..) CurrentIsNotNull is Null"));
+		return;
+	}
+
+	const EChessTeam& PlayerTeam = ChessPlayer->GetChoosenChessTeam();
+	const EChessTeam& CurrentClickedActorTeam = CurrentIsNotNull->GetChessTeam();
+
+	if (UChessFuncs::IsEqualTeam(PlayerTeam, CurrentClickedActorTeam))
+	{
+		// Goto case 7.
+		MovePieceCurrentIsSameTeam(ChessActor);
+	}
+	else
+	{
+		// Goto case 8.
+		MovePieceCurrentIsOtherTeam(ChessActor);
+	}
+}
+
+void AChessGameMode::ProcessClickedChessPiece(class AChessActor* const ChessActor)
+{
+	const EChessTeam& PlayerTeam = ChessPlayer->GetChoosenChessTeam();
+	const EChessTeam& SelectedActorTeam = ChessActor->GetChessTeam();
+
+	if (UChessFuncs::IsEqualTeam(PlayerTeam, SelectedActorTeam))
+	{
+		ProcessPiecesAreSameTeam(ChessActor);
+	}
+	else
+	{
+		ProcessPiecesAreOtherTeam(ChessActor);
+	}
+}
+
+void AChessGameMode::ProcessPiecesAreSameTeam(class AChessActor* const ChessActor)
+{
+	AChessActor* const ClickedCurrentActor = ChessPlayer->GetCurrentClickedActor();
+	if (nullptr == ClickedCurrentActor)
+	{
+		// Goto case 1.
+		SameTeamCurrentIsNull(ChessActor);
+	}
+	else
+	{
+		const EChessTeam& PrevChessActorTeam = ClickedCurrentActor->GetChessTeam();
+		const EChessTeam& NewChessActorTeam = ChessActor->GetChessTeam();
+		
+		if (UChessFuncs::IsEqualTeam(NewChessActorTeam, PrevChessActorTeam))
 		{
-			if (AChessActor* CurrActor = ChessPlayerController->GetCurrentClickedActor())
-			{
-				FIntPoint NewPoint = ChessActor->GetCell();
-
-				if (AChessActor* const AttackedPiece = GetChessPieceFromMap(NewPoint))
-				{
-				}
-				
-				SetChessPieceIntoMap(CurrActor, NewPoint);
-				CurrActor->SetCellPoint(NewPoint);
-			}
-			ChessPlayerController->ChangeCurrentClickedActor(nullptr);
-
-			for (const auto& e : ChessMoveMap)
-			{
-				if (e.IsValid())
-				{
-					e->SetVisiblity(false);
-				}
-			}
+			// Goto case 2.
+			SameTeamCurrentIsSameTeam(ChessActor);
+		}
+		else
+		{
+			// Goto case 3.
+			SameTeamCurrentIsOtherTeam(ChessActor);
 		}
 	}
-	else if(UChessFuncs::IsEqualTeam(PlayerTeam, SelectedActorTeam))
+}
+
+void AChessGameMode::ProcessPiecesAreOtherTeam(class AChessActor* const ChessActor)
+{
+	AChessActor* const ClickedCurrentActor = ChessPlayer->GetCurrentClickedActor();
+	if (nullptr == ClickedCurrentActor)
 	{
-		ChessPlayerController->ChangeCurrentClickedActor(ChessActor);
+		// Goto case 4.
+		OtherTeamCurrentIsNull(ChessActor);
+	}
+	else
+	{
+		const EChessTeam& PrevChessActorTeam = ClickedCurrentActor->GetChessTeam();
+		const EChessTeam& NewChessActorTeam = ChessActor->GetChessTeam();
 
-		FIntPoint CurrPosition = ChessActor->GetCell();
-		TArray<FIntPoint> Directions = ChessActor->GetDirections();
-
-		for (const auto& e : ChessMoveMap)
+		if (UChessFuncs::IsEqualTeam(NewChessActorTeam, PrevChessActorTeam))
 		{
-			if (e.IsValid())
-			{
-				e->SetVisiblity(false);
-			}
+			// Goto case 5.
+			OtherTeamCurrentIsSameTeam(ChessActor);
 		}
-
-		for (const FIntPoint& e : Directions)
+		else
 		{
-			FIntPoint NextPosition = CurrPosition;
-			bool bPersistance = ChessActor->IsPersistance();
-			do
+			// Goto case 6.
+			OtherTeamCurrentIsOtherTeam(ChessActor);
+		}
+	}
+}
+
+
+void AChessGameMode::SameTeamCurrentIsNull(class AChessActor* const ChessActor)
+{
+	ChessPlayer->ChangeCurrentClickedActor(ChessActor);
+
+	FIntPoint CurrPosition = ChessActor->GetCell();
+	TArray<FIntPoint> Directions = ChessActor->GetDirections();
+
+	for (const auto& e : ChessMoveMap)
+	{
+		if (e.IsValid())
+		{
+			e->SetVisiblity(false);
+		}
+	}
+
+	for (const FIntPoint& e : Directions)
+	{
+		FIntPoint NextPosition = CurrPosition;
+		bool bPersistance = ChessActor->IsPersistance();
+		do
+		{
+			NextPosition += e;
+			if (AChessActor * MoverPieceActor = GetMoverPieceFromMap(NextPosition))
 			{
-				NextPosition += e;
-				if (AChessActor * MoverPieceActor = GetMoverPieceFromMap(NextPosition))
-				{
-					MoverPieceActor->SetVisiblity(true);
+				MoverPieceActor->SetVisiblity(true);
 
-					if (AChessActor * ChessPiece = GetChessPieceFromMap(NextPosition))
-					{
-						bPersistance = false;
-
-						if (UChessFuncs::IsEqualTeamBetweenTwoActors(ChessActor, ChessPiece))
-						{
-							MoverPieceActor->SetVisiblity(false);
-						}
-					}
-				}
-				else
+				if (AChessActor * ChessPiece = GetChessPieceFromMap(NextPosition))
 				{
 					bPersistance = false;
+
+					if (UChessFuncs::IsEqualTeamBetweenTwoActors(ChessActor, ChessPiece))
+					{
+						MoverPieceActor->SetVisiblity(false);
+					}
 				}
-			} while (bPersistance);
+			}
+			else
+			{
+				bPersistance = false;
+			}
+		} while (bPersistance);
+	}
+}
+
+void AChessGameMode::SameTeamCurrentIsSameTeam(class AChessActor* const ChessActor)
+{
+	ChessPlayer->ChangeCurrentClickedActor(ChessActor);
+
+	FIntPoint CurrPosition = ChessActor->GetCell();
+	TArray<FIntPoint> Directions = ChessActor->GetDirections();
+
+	for (const auto& e : ChessMoveMap)
+	{
+		if (e.IsValid())
+		{
+			e->SetVisiblity(false);
 		}
 	}
+
+	for (const FIntPoint& e : Directions)
+	{
+		FIntPoint NextPosition = CurrPosition;
+		bool bPersistance = ChessActor->IsPersistance();
+		do
+		{
+			NextPosition += e;
+			if (AChessActor * MoverPieceActor = GetMoverPieceFromMap(NextPosition))
+			{
+				MoverPieceActor->SetVisiblity(true);
+
+				if (AChessActor * ChessPiece = GetChessPieceFromMap(NextPosition))
+				{
+					bPersistance = false;
+
+					if (UChessFuncs::IsEqualTeamBetweenTwoActors(ChessActor, ChessPiece))
+					{
+						MoverPieceActor->SetVisiblity(false);
+					}
+				}
+			}
+			else
+			{
+				bPersistance = false;
+			}
+		} while (bPersistance);
+	}
+}
+
+void AChessGameMode::SameTeamCurrentIsOtherTeam(class AChessActor* const ChessActor)
+{
+
+}
+
+void AChessGameMode::OtherTeamCurrentIsNull(class AChessActor* const ChessActor)
+{
+
+}
+
+void AChessGameMode::OtherTeamCurrentIsSameTeam(class AChessActor* const ChessActor)
+{
+
+}
+
+void AChessGameMode::OtherTeamCurrentIsOtherTeam(class AChessActor* const ChessActor)
+{
+
+}
+
+void AChessGameMode::MovePieceCurrentIsSameTeam(class AChessActor* const ChessActor)
+{
+	if (AChessActor * CurrActor = ChessPlayer->GetCurrentClickedActor())
+	{
+		FIntPoint NewPoint = ChessActor->GetCell();
+		if (AChessActor * const AttackedPiece = GetChessPieceFromMap(NewPoint))
+		{
+		}
+
+		SetChessPieceIntoMap(CurrActor, NewPoint);
+		CurrActor->SetCellPoint(NewPoint);
+	}
+	ChessPlayer->ChangeCurrentClickedActor(nullptr);
+
+	for (const auto& e : ChessMoveMap)
+	{
+		if (e.IsValid())
+		{
+			e->SetVisiblity(false);
+		}
+	}
+}
+
+void AChessGameMode::MovePieceCurrentIsOtherTeam(class AChessActor* const ChessActor)
+{
+
 }
 
 AChessActor* AChessGameMode::GetMoverPieceFromMap(const FIntPoint& Point) const

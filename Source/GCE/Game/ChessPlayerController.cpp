@@ -13,7 +13,6 @@ AChessPlayerController::AChessPlayerController()
 	bEnableClickEvents = true;
 	bEnableMouseOverEvents = true;
 	bEnableTouchOverEvents = true;
-	
 }
 
 void AChessPlayerController::ReceivedPlayer()
