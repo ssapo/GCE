@@ -36,10 +36,19 @@ public:
 	UFUNCTION(BlueprintPure)
 		EChessTeam GetChoosenChessTeam() const { return ChoosenChessTeam; }
 
+	UFUNCTION(BlueprintCallable)
+		void SetMyTurn(bool Value) { bMyTurn = Value; }
+
+	UFUNCTION(BlueprintPure)
+		bool IsMyTurn() const { return bMyTurn; }
+
 private:
 	UPROPERTY()
 		TWeakObjectPtr<class AChessActor> CurrentClickedActor;
 
 	UPROPERTY()
 		EChessTeam ChoosenChessTeam;
+
+	UPROPERTY()
+		bool bMyTurn;
 };

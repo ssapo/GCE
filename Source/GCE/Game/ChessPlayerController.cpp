@@ -37,8 +37,6 @@ void AChessPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	GCE_LOG_S(Log);
-
-	SetChoosenChessTeam(EChessTeam::White);
 }
 
 void AChessPlayerController::ChangeCurrentClickedActor(AChessActor* ClickedActor)

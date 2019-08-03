@@ -23,6 +23,15 @@ private:
 	class AChessActor* GetChessPieceFromMap(const FIntPoint& Point) const;
 	void SetChessPieceIntoMap(class AChessActor* Actor, const FIntPoint& Point);
 
+	void SetVisibleMovableCells(
+		const EChessTeam& TeamOfActor,
+		const FIntPoint& Position,
+		const TArray<FIntPoint>& Directions,
+		bool bPersistance
+	);
+
+	void SetInvisibleAllCells();
+
 	void OnSelectedChessActor(class AChessActor* const ChessActor);
 	void ProcessClickedMovePiece(class AChessActor* const ChessActor);
 	void ProcessClickedChessPiece(class AChessActor* const ChessActor);
@@ -53,9 +62,9 @@ private:
 	//Case 8: MovePiece , Current is OtherTeam
 	void MovePieceCurrentIsOtherTeam(class AChessActor* const ChessActor);
 
+private:
 	static constexpr int32 CHESS_WIDTH = 8;
 	static constexpr int32 CHESS_HEIGHT = 8;
-private:
 
 	UPROPERTY()
 		TArray<int32> ChessStartMap;
@@ -82,4 +91,6 @@ private:
 		FVector StartIntervalLocation;
 
 	TWeakObjectPtr<class AChessPlayerController> ChessPlayer;
+
+	
 };
