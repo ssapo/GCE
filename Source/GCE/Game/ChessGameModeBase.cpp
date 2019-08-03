@@ -47,61 +47,61 @@ void AChessGameMode::StartPlay()
 
 	// 체스 이동 타일
 	ChessMoveMap.Reset();
-	{
-		if (MovePieceClass)
-		{
-			for (int y = 0; y < CHESS_HEIGHT; ++y)
-			{
-				for (int x = 0; x < CHESS_WIDTH; ++x)
-				{
-					FVector NewLocation = StartInitializeLocation;
-					if (AChessActor * Actor = GetWorld()->SpawnActor<AChessActor>(MovePieceClass,
-						NewLocation, FRotator::ZeroRotator))
-					{
-						Actor->SetIntervalVector(StartIntervalLocation);
-						Actor->SetCellXY(x, y);
-						Actor->SetVisiblity(false);
-						Actor->OnSelected.AddUObject(this, &AChessGameMode::OnSelectedChessActor);
 
-						ChessMoveMap.Add(Actor);
-					}
-				}
-			}
-		}
-	}
-
-	// 체스 맵
-	ChessGameMap.Reset();
+	if (MovePieceClass)
 	{
 		for (int y = 0; y < CHESS_HEIGHT; ++y)
 		{
 			for (int x = 0; x < CHESS_WIDTH; ++x)
 			{
 				FVector NewLocation = StartInitializeLocation;
-				EChessActor Key = EChessActor(ChessStartMap[y * CHESS_WIDTH + x]);
-				if (Key != EChessActor::NONE)
+				if (AChessActor * Actor = GetWorld()->SpawnActor<AChessActor>(MovePieceClass,
+					NewLocation, FRotator::ZeroRotator))
 				{
-					if (UClass* BoardClass = ChessActors[Key])
-					{
-						if (AChessActor* Actor = GetWorld()->SpawnActor<AChessActor>(BoardClass,
-							NewLocation, FRotator::ZeroRotator))
-						{
-							Actor->SetIntervalVector(StartIntervalLocation);
-							Actor->SetCellXY(x, y);
-							Actor->SetVisiblity(true);
-							Actor->OnSelected.AddUObject(this, &AChessGameMode::OnSelectedChessActor);
+					Actor->SetIntervalVector(StartIntervalLocation);
+					Actor->SetCellXY(x, y);
+					Actor->SetVisiblity(false);
+					Actor->OnSelected.AddUObject(this, &AChessGameMode::OnSelectedChessActor);
 
-							ChessGameMap.Add(Actor);
-						}
-					}
-				}
-				else
-				{
-					ChessGameMap.Add(nullptr);
+					ChessMoveMap.Add(Actor);
 				}
 			}
 		}
 	}
+
+
+	// 체스 맵
+	ChessGameMap.Reset();
+
+	for (int y = 0; y < CHESS_HEIGHT; ++y)
+	{
+		for (int x = 0; x < CHESS_WIDTH; ++x)
+		{
+			FVector NewLocation = StartInitializeLocation;
+			EChessActor Key = EChessActor(ChessStartMap[y * CHESS_WIDTH + x]);
+			if (Key != EChessActor::NONE)
+			{
+				if (UClass * BoardClass = ChessActors[Key])
+				{
+					if (AChessActor * Actor = GetWorld()->SpawnActor<AChessActor>(BoardClass,
+						NewLocation, FRotator::ZeroRotator))
+					{
+						Actor->SetIntervalVector(StartIntervalLocation);
+						Actor->SetCellXY(x, y);
+						Actor->SetVisiblity(true);
+						Actor->OnSelected.AddUObject(this, &AChessGameMode::OnSelectedChessActor);
+
+						ChessGameMap.Add(Actor);
+					}
+				}
+			}
+			else
+			{
+				ChessGameMap.Add(nullptr);
+			}
+		}
+	}
+
 
 	if (AChessPlayerController* PC = GetWorld()->GetFirstPlayerController<AChessPlayerController>())
 	{
