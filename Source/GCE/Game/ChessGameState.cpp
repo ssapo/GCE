@@ -57,12 +57,6 @@ void AChessGameState::DefaultTimer()
 	Super::DefaultTimer();
 }
 
-bool AChessGameState::ShouldShowGore() const
-{
-	//GCE_LOG_S(Log);
-	return Super::ShouldShowGore();
-}
-
 void AChessGameState::PostInitializeComponents()
 {
 	//GCE_LOG_S(Log);

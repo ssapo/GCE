@@ -85,12 +85,7 @@ void AChessGameMode::SameTeamCurrentIsNull(class AChessActor* const ChessActor)
 {
 	ChessPlayer->ChangeCurrentClickedActor(ChessActor);
 
-	SetVisibleMovableCells(
-		ChessActor->GetChessTeam(),
-		ChessActor->GetCell(),
-		ChessActor->GetDirections(),
-		ChessActor->IsPersistance()
-	);
+	SetVisibleMovableCells(ChessActor);
 }
 
 void AChessGameMode::SameTeamCurrentIsSameTeam(class AChessActor* const ChessActor)
@@ -99,12 +94,7 @@ void AChessGameMode::SameTeamCurrentIsSameTeam(class AChessActor* const ChessAct
 
 	SetInvisibleAllCells();
 
-	SetVisibleMovableCells(
-		ChessActor->GetChessTeam(),
-		ChessActor->GetCell(),
-		ChessActor->GetDirections(),
-		ChessActor->IsPersistance()
-	);
+	SetVisibleMovableCells(ChessActor);
 }
 
 void AChessGameMode::SameTeamCurrentIsOtherTeam(class AChessActor* const ChessActor)
@@ -113,24 +103,14 @@ void AChessGameMode::SameTeamCurrentIsOtherTeam(class AChessActor* const ChessAc
 
 	SetInvisibleAllCells();
 	
-	SetVisibleMovableCells(
-		ChessActor->GetChessTeam(),
-		ChessActor->GetCell(),
-		ChessActor->GetDirections(),
-		ChessActor->IsPersistance()
-	);
+	SetVisibleMovableCells(ChessActor);
 }
 
 void AChessGameMode::OtherTeamCurrentIsNull(class AChessActor* const ChessActor)
 {
 	ChessPlayer->ChangeCurrentClickedActor(ChessActor);
 
-	SetVisibleMovableCells(
-		ChessActor->GetChessTeam(),
-		ChessActor->GetCell(),
-		ChessActor->GetDirections(),
-		ChessActor->IsPersistance()
-	);
+	SetVisibleMovableCells(ChessActor);
 }
 
 void AChessGameMode::OtherTeamCurrentIsSameTeam(class AChessActor* const ChessActor)
@@ -139,14 +119,7 @@ void AChessGameMode::OtherTeamCurrentIsSameTeam(class AChessActor* const ChessAc
 
 	SetInvisibleAllCells();
 
-	SetVisibleMovableCells(
-		ChessActor->GetChessTeam(),
-		ChessActor->GetCell(),
-		ChessActor->GetDirections(),
-		ChessActor->IsPersistance()
-	);
-
-
+	SetVisibleMovableCells(ChessActor);
 }
 
 void AChessGameMode::OtherTeamCurrentIsOtherTeam(class AChessActor* const ChessActor)
@@ -155,12 +128,7 @@ void AChessGameMode::OtherTeamCurrentIsOtherTeam(class AChessActor* const ChessA
 
 	SetInvisibleAllCells();
 
-	SetVisibleMovableCells(
-		ChessActor->GetChessTeam(),
-		ChessActor->GetCell(),
-		ChessActor->GetDirections(),
-		ChessActor->IsPersistance()
-	);
+	SetVisibleMovableCells(ChessActor);
 }
 
 void AChessGameMode::MovePieceCurrentIsSameTeam(class AChessActor* const ChessActor)
@@ -170,7 +138,7 @@ void AChessGameMode::MovePieceCurrentIsSameTeam(class AChessActor* const ChessAc
 		FIntPoint NewPoint = ChessActor->GetCell();
 		if (AChessActor * const AttackedPiece = GetChessPieceFromMap(NewPoint))
 		{
-			if (GetWorld()->DestroyActor(AttackedPiece))
+			if (AttackedPiece->Destroy())
 			{
 				GCE_LOG(Log, TEXT("Successs Destroy Actor [%s]"), *AttackedPiece->GetName());
 			}
@@ -186,6 +154,8 @@ void AChessGameMode::MovePieceCurrentIsSameTeam(class AChessActor* const ChessAc
 	ChessPlayer->ChangeCurrentClickedActor(nullptr);
 
 	SetInvisibleAllCells();
+
+	bWaitAnimation = true;
 }
 
 void AChessGameMode::MovePieceCurrentIsOtherTeam(class AChessActor* const ChessActor)

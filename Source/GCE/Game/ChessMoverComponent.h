@@ -2,10 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "GCE.h"
 #include "Components/ActorComponent.h"
 #include "ChessMoverComponent.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnMovingEnd);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class GCE_API UChessMoverComponent : public UActorComponent
@@ -31,7 +32,13 @@ public:
 		void SetIntervalVector(const FVector& Value) { IntervalVector = Value; }
 
 	UFUNCTION(BlueprintPure)
-		TArray<FIntPoint> GetDirections() const { return Directions; }
+		TArray<FIntPoint> GetAttackDirections() const { return AttackDirections; }
+
+	UFUNCTION(BlueprintPure)
+		TArray<FIntPoint> GetMoveDirections() const { return MoveDirections; }
+
+	UFUNCTION(BlueprintPure)
+		TArray<FIntPoint> GetFirstMoveDirections() const { return AttackDirections; }
 
 	UFUNCTION(BlueprintPure)
 		FIntPoint GetCell() const { return CurrentPoint; }
@@ -45,15 +52,44 @@ public:
 	UFUNCTION(BlueprintPure)
 		bool IsPercistance() const { return bPercistance; }
 
+	UFUNCTION(BlueprintCallable)
+		void SetFirstMove(bool Value) { bFirstMove = Value; }
+
+	UFUNCTION(BlueprintPure)
+		bool IsFirstMove() const { return bFirstMove; }
+
+	UFUNCTION(BlueprintPure)
+		bool HasFirstSpecialMove() const { return FirstMoveDirections.Num() > 0; }
+
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+private:
+	void MoveToDesiredPosition(float DeltaTime);
+
+public:
+	FOnMovingEnd OnMovingEnd;
 
 private:
 	FIntPoint CurrentPoint;
 
 	FVector IntervalVector;
 
+	FVector DesiredPosition;
+
+	float MovementSpeed;
+
+	bool bMoving;
+
+	bool bFirstMove;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mover|Direction", Meta = (AllowPrivateAccess = true))
-		TArray<FIntPoint> Directions;
+		TArray<FIntPoint> AttackDirections;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mover|Direction", Meta = (AllowPrivateAccess = true))
+		TArray<FIntPoint> MoveDirections;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mover|Direction", Meta = (AllowPrivateAccess = true))
+		TArray<FIntPoint> FirstMoveDirections;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mover|Direction", Meta = (AllowPrivateAccess = true))
 		bool bPercistance;

@@ -12,9 +12,6 @@
 // Sets default values
 AChessActor::AChessActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	GCE_LOG_S(Log);
-	PrimaryActorTick.bCanEverTick = true;
 	bOutlineEffect = true;
 	bEnableSelected = true;
 	bVisiblityToggled = true;
@@ -79,7 +76,7 @@ TArray<FIntPoint> AChessActor::GetDirections() const
 {
 	if (ChessMover)
 	{
-		return ChessMover->GetDirections();
+		return ChessMover->GetAttackDirections();
 	}
 
 	return TArray<FIntPoint>();
@@ -151,6 +148,11 @@ void AChessActor::BeginPlay()
 {
 	GCE_LOG_S(Log);
 	Super::BeginPlay();
+
+	if (ChessMover)
+	{
+		ChessMover->OnMovingEnd.AddUObject(this, &AChessActor::OnMovingEndBroadcast);
+	}
 }
 
 void AChessActor::NotifyActorOnClicked(FKey ButtonPressed)
@@ -188,9 +190,9 @@ void AChessActor::NotifyActorOnInputTouchLeave(const ETouchIndex::Type FingerInd
 	Super::NotifyActorOnInputTouchLeave(FingerIndex);
 }
 
-// Called every frame
-void AChessActor::Tick(float DeltaTime)
+void AChessActor::OnMovingEndBroadcast()
 {
-	Super::Tick(DeltaTime);
+	OnMovingEnd.Broadcast(this);
 }
+
 

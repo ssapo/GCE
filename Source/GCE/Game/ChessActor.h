@@ -7,6 +7,7 @@
 #include "ChessActor.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSelectedChessActor, class AChessActor* const);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMovingEndChessActor, class AChessActor* const);
 
 UCLASS()
 class GCE_API AChessActor : public AActor
@@ -16,9 +17,6 @@ class GCE_API AChessActor : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AChessActor();
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	virtual void NotifyActorOnClicked(FKey ButtonPressed = EKeys::LeftMouseButton) override;
 	virtual void NotifyActorOnInputTouchBegin(const ETouchIndex::Type FingerIndex) override;
@@ -71,6 +69,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 		bool IsPersistance() const;
 
+	void OnMovingEndBroadcast();
+
 protected:
 	UFUNCTION(BlueprintCallable, Category = "ChessPiece")
 		void InitChessActor(class UMeshComponent* Piece, class UChessMoverComponent* Mover);
@@ -80,6 +80,7 @@ protected:
 	
 public:
 	FOnSelectedChessActor OnSelected;
+	FOnMovingEndChessActor OnMovingEnd;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessPiece", Meta = (AllowPrivateAccess = true))

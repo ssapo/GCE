@@ -27,7 +27,6 @@ public:
 	virtual void OnRep_MatchState() override;
 	virtual void OnRep_ElapsedTime() override;
 	virtual void DefaultTimer() override;
-	virtual bool ShouldShowGore() const override;
 	virtual void PostInitializeComponents() override;
 	virtual void ReceivedGameModeClass() override;
 	virtual bool HasMatchStarted() const override;

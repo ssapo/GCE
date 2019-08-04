@@ -22,8 +22,15 @@ private:
 	class AChessActor* GetMoverPieceFromMap(const FIntPoint& Point) const;
 	class AChessActor* GetChessPieceFromMap(const FIntPoint& Point) const;
 	void SetChessPieceIntoMap(class AChessActor* Actor, const FIntPoint& Point);
-
+	
+	void SetVisibleMovableCells(class AChessActor* const ChessActor);
 	void SetVisibleMovableCells(
+		const EChessTeam& TeamOfActor,
+		const FIntPoint& Position,
+		const TArray<FIntPoint>& Directions,
+		bool bPersistance
+	);
+	void SetVisibleAttackableCells(
 		const EChessTeam& TeamOfActor,
 		const FIntPoint& Position,
 		const TArray<FIntPoint>& Directions,
@@ -33,6 +40,8 @@ private:
 	void SetInvisibleAllCells();
 
 	void OnSelectedChessActor(class AChessActor* const ChessActor);
+	void OnMovingEndChessActor(class AChessActor* const ChessActor);
+
 	void ProcessClickedMovePiece(class AChessActor* const ChessActor);
 	void ProcessClickedChessPiece(class AChessActor* const ChessActor);
 	void ProcessPiecesAreSameTeam(class AChessActor* const ChessActor);
@@ -92,5 +101,5 @@ private:
 
 	TWeakObjectPtr<class AChessPlayerController> ChessPlayer;
 
-	
+	bool bWaitAnimation;
 };
