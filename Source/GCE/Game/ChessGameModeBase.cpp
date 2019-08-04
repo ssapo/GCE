@@ -39,12 +39,10 @@ void AChessGameMode::StartPlay()
 {
 	Super::StartPlay();
 
-	if (ChessBoardClass)
-	{
-		if (AChessActor* Board = GetWorld()->SpawnActor<AChessActor>(ChessBoardClass))
-		{
-		}
-	}
+	GCE_CHECK(nullptr != ChessBoardClass);
+	auto BoardClass = GetWorld()->SpawnActor<AChessActor>(ChessBoardClass);
+	GCE_CHECK(nullptr != BoardClass);
+
 
 	// 체스 이동 타일
 	ChessMoveMap.Reset();
@@ -117,9 +115,13 @@ void AChessGameMode::StartPlay()
 
 		ChessPlayer->SetChoosenChessTeam(EChessTeam::White);
 		ChessPlayer->SetMyTurn(true);
+		
+		auto Actor = Cast<AActor>(ChessPlayer->GetPawn());
+		Actor->SetActorLocation(FVector(-550.0f, -380.0f, 720.0f));
 	}
 
 	bWaitAnimation = false;
+
 }
 
 void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
