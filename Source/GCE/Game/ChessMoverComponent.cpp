@@ -69,7 +69,7 @@ void UChessMoverComponent::MoveToDesiredPosition(float DeltaTime)
 		PrevLocation = DesiredPosition;
 		bMoving = false;
 
-		OnMovingEnd.Broadcast();
+		OnMovingEnd.Broadcast(this);
 	}
 	else
 	{

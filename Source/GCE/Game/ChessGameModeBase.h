@@ -40,7 +40,7 @@ private:
 	void SetInvisibleAllCells();
 
 	void OnSelectedChessActor(class AChessActor* const ChessActor);
-	void OnMovingEndChessActor(class AChessActor* const ChessActor);
+	void OnMovingEndChessActor(class UChessMoverComponent* const Mover);
 
 	void ProcessClickedMovePiece(class AChessActor* const ChessActor);
 	void ProcessClickedChessPiece(class AChessActor* const ChessActor);

@@ -49,32 +49,31 @@ void AChessGameMode::StartPlay()
 	// 체스 이동 타일
 	ChessMoveMap.Reset();
 
-	if (MovePieceClass)
+	if (nullptr == MovePieceClass)
 	{
-		for (int y = 0; y < CHESS_HEIGHT; ++y)
-		{
-			for (int x = 0; x < CHESS_WIDTH; ++x)
-			{
-				FVector NewLocation = StartInitializeLocation;
-				if (AChessActor * Actor = GetWorld()->SpawnActor<AChessActor>(MovePieceClass,
-					NewLocation, FRotator::ZeroRotator))
-				{
-					Actor->SetIntervalVector(StartIntervalLocation);
-					Actor->SetCellXY(x, y);
-					Actor->SetVisiblity(false);
-					Actor->OnSelected.AddUObject(this, &AChessGameMode::OnSelectedChessActor);
-					Actor->OnMovingEnd.AddUObject(this, &AChessGameMode::OnMovingEndChessActor);
+		GCE_LOG(Error, TEXT("nullptr == MovePieceClass"));
+	}
 
-					ChessMoveMap.Add(Actor);
-				}
+	for (int Y = 0; Y < CHESS_HEIGHT; ++Y)
+	{
+		for (int X = 0; X < CHESS_WIDTH; ++X)
+		{
+			FVector NewLocation = StartInitializeLocation;
+			if (AChessActor * Actor = GetWorld()->SpawnActor<AChessActor>(MovePieceClass))
+			{
+				NewLocation -= FVector(StartIntervalLocation.X * X, StartIntervalLocation.Y * Y, 0);
+				Actor->SetVisiblity(false);
+				Actor->OnSelected.AddUObject(this, &AChessGameMode::OnSelectedChessActor);
+				Actor->SetActorLocation(NewLocation);
+				//Actor->OnMovingEnd.AddUObject(this, &AChessGameMode::OnMovingEndChessActor);
+
+				ChessMoveMap.Add(Actor);
 			}
 		}
 	}
 
-
 	// 체스 맵
 	ChessGameMap.Reset();
-
 	for (int y = 0; y < CHESS_HEIGHT; ++y)
 	{
 		for (int x = 0; x < CHESS_WIDTH; ++x)
@@ -83,20 +82,27 @@ void AChessGameMode::StartPlay()
 			EChessActor Key = EChessActor(ChessStartMap[y * CHESS_WIDTH + x]);
 			if (Key != EChessActor::NONE)
 			{
-				if (UClass * BoardClass = ChessActors[Key])
-				{
-					if (AChessActor * Actor = GetWorld()->SpawnActor<AChessActor>(BoardClass,
-						NewLocation, FRotator::ZeroRotator))
-					{
-						Actor->SetIntervalVector(StartIntervalLocation);
-						Actor->SetCellXY(x, y);
-						Actor->SetVisiblity(true);
-						Actor->OnSelected.AddUObject(this, &AChessGameMode::OnSelectedChessActor);
-						Actor->OnMovingEnd.AddUObject(this, &AChessGameMode::OnMovingEndChessActor);
+				auto CBoard = ChessActors[Key];
+				if (nullptr == CBoard) { continue; }
 
-						ChessGameMap.Add(Actor);
-					}
-				}
+				auto Actor = GetWorld()->SpawnActor<AChessActor>(CBoard);
+				if (nullptr == Actor) { continue; }
+
+				Actor->SetActorLocation(NewLocation);
+				Actor->SetVisiblity(true);
+				Actor->OnSelected.AddUObject(this, &AChessGameMode::OnSelectedChessActor);
+
+				auto Component = Actor->GetComponentByClass(UChessMoverComponent::StaticClass());
+				if (nullptr == Component) { continue; }
+
+				auto Mover = Cast<UChessMoverComponent>(Component);
+				if (nullptr == Mover) { continue; }
+				
+				Mover->SetIntervalVector(StartIntervalLocation);
+				Mover->SetCellXY(x, y);
+				Mover->OnMovingEnd.AddUObject(this, &AChessGameMode::OnMovingEndChessActor);
+				
+				ChessGameMap.Add(Actor);
 			}
 			else
 			{
@@ -105,8 +111,7 @@ void AChessGameMode::StartPlay()
 		}
 	}
 
-
-	if (AChessPlayerController* PC = GetWorld()->GetFirstPlayerController<AChessPlayerController>())
+	if (auto PC = GetWorld()->GetFirstPlayerController<AChessPlayerController>())
 	{
 		ChessPlayer = PC;
 
@@ -144,12 +149,12 @@ void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
 	}
 }
 
-void AChessGameMode::OnMovingEndChessActor(class AChessActor* const ChessActor)
+void AChessGameMode::OnMovingEndChessActor(UChessMoverComponent* const Mover)
 {
 	bWaitAnimation = false;
 }
 
-void AChessGameMode::ProcessClickedChessPiece(class AChessActor* const ChessActor)
+void AChessGameMode::ProcessClickedChessPiece(AChessActor* const ChessActor)
 {
 	const EChessTeam& PlayerTeam = ChessPlayer->GetChoosenChessTeam();
 	const EChessTeam& SelectedActorTeam = ChessActor->GetChessTeam();
@@ -192,11 +197,19 @@ AChessActor* AChessGameMode::GetChessPieceFromMap(const FIntPoint& Point) const
 	return nullptr;
 }
 
-void AChessGameMode::SetChessPieceIntoMap(class AChessActor* Actor, const FIntPoint& NewPoint)
+void AChessGameMode::SetChessPieceIntoMap(AChessActor* Actor, const FIntPoint& NewPoint)
 {
+	GCE_CHECK(Actor);
+
+	auto Component = Actor->GetComponentByClass(UChessMoverComponent::StaticClass());
+	GCE_CHECK(Component);
+
+	auto Mover = Cast<UChessMoverComponent>(Component);
+	GCE_CHECK(Mover);
+
 	if (0 <= NewPoint.X && CHESS_WIDTH > NewPoint.X && 0 <= NewPoint.Y && CHESS_HEIGHT > NewPoint.Y)
 	{
-		FIntPoint PrevPoint = Actor->GetCell();
+		FIntPoint PrevPoint = Mover->GetCell();
 		if (PrevPoint == FIntPoint::NoneValue)
 		{
 			return;
@@ -220,35 +233,37 @@ void AChessGameMode::SetInvisibleAllCells()
 
 void AChessGameMode::SetVisibleMovableCells(AChessActor* const ChessActor)
 {
-	UActorComponent* Component = ChessActor->GetComponentByClass(UChessMoverComponent::StaticClass());
-	if (UChessMoverComponent* Mover = Cast<UChessMoverComponent>(Component))
-	{
-		if (Mover->HasFirstSpecialMove() && Mover->IsFirstMove())
-		{
-			SetVisibleMovableCells(
-				ChessActor->GetChessTeam(),
-				Mover->GetCell(),
-				Mover->GetFirstMoveDirections(),
-				Mover->IsPercistance()
-			);
-		}
-		else
-		{
-			SetVisibleMovableCells(
-				ChessActor->GetChessTeam(),
-				Mover->GetCell(),
-				Mover->GetMoveDirections(),
-				Mover->IsPercistance()
-			);
-		}
+	auto Component = ChessActor->GetComponentByClass(UChessMoverComponent::StaticClass());
+	GCE_CHECK(Component);
 
-		SetVisibleAttackableCells(
+	auto Mover = Cast<UChessMoverComponent>(Component);
+	GCE_CHECK(Mover);
+
+	if (Mover->HasFirstSpecialMove() && Mover->IsFirstMove())
+	{
+		SetVisibleMovableCells(
 			ChessActor->GetChessTeam(),
 			Mover->GetCell(),
-			Mover->GetAttackDirections(),
+			Mover->GetFirstMoveDirections(),
 			Mover->IsPercistance()
 		);
 	}
+	else
+	{
+		SetVisibleMovableCells(
+			ChessActor->GetChessTeam(),
+			Mover->GetCell(),
+			Mover->GetMoveDirections(),
+			Mover->IsPercistance()
+		);
+	}
+
+	SetVisibleAttackableCells(
+		ChessActor->GetChessTeam(),
+		Mover->GetCell(),
+		Mover->GetAttackDirections(),
+		Mover->IsPercistance()
+	);
 }
 
 void AChessGameMode::SetVisibleMovableCells(

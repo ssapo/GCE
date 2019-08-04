@@ -25,36 +25,6 @@ public:
 	virtual void NotifyActorOnInputTouchLeave(const ETouchIndex::Type FingerIndex) override;
 	
 	UFUNCTION(BlueprintCallable)
-		bool IsValidMover();
-
-	UFUNCTION(BlueprintCallable)
-		void SetIntervalVector(const FVector& Value);
-
-	UFUNCTION(BlueprintCallable)
-		void SetCellXY(int32 NewX, int32 NewY);
-
-	UFUNCTION(BlueprintCallable)
-		void SetCellPoint(const FIntPoint& Point);
-
-	UFUNCTION(BlueprintCallable)
-		void SetCellX(int32 NewX);
-
-	UFUNCTION(BlueprintCallable)
-		void SetCellY(int32 NewY);
-
-	UFUNCTION(BlueprintPure)
-		TArray<FIntPoint> GetDirections() const;
-
-	UFUNCTION(BlueprintPure)
-		FIntPoint GetCell() const;
-
-	UFUNCTION(BlueprintPure)
-		int32 GetCellX() const;
-
-	UFUNCTION(BlueprintPure)
-		int32 GetCellY() const;
-
-	UFUNCTION(BlueprintCallable)
 		void SetOutlineEffect(bool bToggle);
 
 	UFUNCTION(BlueprintCallable)
@@ -66,28 +36,19 @@ public:
 	UFUNCTION(BlueprintPure)
 		EChessTeam GetChessTeam() const { return ChessTeamType; }
 
-	UFUNCTION(BlueprintCallable)
-		bool IsPersistance() const;
-
-	void OnMovingEndBroadcast();
-
 protected:
 	UFUNCTION(BlueprintCallable, Category = "ChessPiece")
-		void InitChessActor(class UMeshComponent* Piece, class UChessMoverComponent* Mover);
+		void InitChessActor(class UMeshComponent* Piece);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
 public:
 	FOnSelectedChessActor OnSelected;
-	FOnMovingEndChessActor OnMovingEnd;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessPiece", Meta = (AllowPrivateAccess = true))
 		class UMeshComponent* ChessBody;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessPiece", Meta = (AllowPrivateAccess = true))
-		class UChessMoverComponent* ChessMover;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessTeam", Meta = (AllowPrivateAccess = true))
 		EChessTeam ChessTeamType;

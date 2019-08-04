@@ -7,7 +7,6 @@
 #include <GameFramework/MovementComponent.h>
 #include "ChessPlayerController.h"
 #include "ChessGameModeBase.h"
-#include "ChessMoverComponent.h"
 
 // Sets default values
 AChessActor::AChessActor()
@@ -17,99 +16,12 @@ AChessActor::AChessActor()
 	bVisiblityToggled = true;
 
 	ChessBody = nullptr;
-	ChessMover = nullptr;
 }
 
-void AChessActor::InitChessActor(class UMeshComponent* Piece, class UChessMoverComponent* Mover)
+void AChessActor::InitChessActor(class UMeshComponent* Piece)
 {
 	GCE_CHECK(nullptr != Piece);
 	ChessBody = Piece;
-	ChessMover = Mover;
-}
-
-bool AChessActor::IsValidMover()
-{
-	return ChessMover != nullptr;
-}
-
-void AChessActor::SetIntervalVector(const FVector& Value)
-{
-	if (ChessMover)
-	{
-		ChessMover->SetIntervalVector(Value);
-	}
-}
-
-void AChessActor::SetCellXY(int32 NewX, int32 NewY)
-{
-	if (ChessMover)
-	{
-		ChessMover->SetCellXY(NewX, NewY);
-	}
-}
-
-void AChessActor::SetCellPoint(const FIntPoint& Point)
-{
-	if (ChessMover)
-	{
-		ChessMover->SetCellPoint(Point);
-	}
-}
-
-void AChessActor::SetCellX(int32 NewX)
-{
-	if (ChessMover)
-	{
-		ChessMover->SetCellX(NewX);
-	}
-}
-
-void AChessActor::SetCellY(int32 NewY)
-{
-	if (ChessMover)
-	{
-		ChessMover->SetCellY(NewY);
-	}
-}
-
-TArray<FIntPoint> AChessActor::GetDirections() const
-{
-	if (ChessMover)
-	{
-		return ChessMover->GetAttackDirections();
-	}
-
-	return TArray<FIntPoint>();
-}
-
-FIntPoint AChessActor::GetCell() const
-{
-	if (ChessMover)
-	{
-		return ChessMover->GetCell();
-	}
-
-	return FIntPoint::NoneValue;
-}
-
-int32 AChessActor::GetCellX() const
-{
-	if (ChessMover)
-	{
-		return ChessMover->GetCellX();
-	}
-
-	return INDEX_NONE;
-}
-
-int32 AChessActor::GetCellY() const
-{
-	if (ChessMover)
-	{
-		return ChessMover->GetCellY();
-	}
-
-	return INDEX_NONE;
 }
 
 void AChessActor::SetOutlineEffect(bool bToggle)
@@ -118,16 +30,6 @@ void AChessActor::SetOutlineEffect(bool bToggle)
 	{
 		ChessBody->SetRenderCustomDepth(bOutlineEffect && bToggle);
 	}
-}
-
-bool AChessActor::IsPersistance() const
-{
-	if (ChessMover)
-	{
-		return ChessMover->IsPercistance();
-	}
-
-	return false;
 }
 
 void AChessActor::SetVisiblity(bool bToggle)
@@ -148,11 +50,6 @@ void AChessActor::BeginPlay()
 {
 	GCE_LOG_S(Log);
 	Super::BeginPlay();
-
-	if (ChessMover)
-	{
-		ChessMover->OnMovingEnd.AddUObject(this, &AChessActor::OnMovingEndBroadcast);
-	}
 }
 
 void AChessActor::NotifyActorOnClicked(FKey ButtonPressed)
@@ -189,10 +86,3 @@ void AChessActor::NotifyActorOnInputTouchLeave(const ETouchIndex::Type FingerInd
 	GCE_LOG(Log, TEXT("Name [%s]"), *GetName());
 	Super::NotifyActorOnInputTouchLeave(FingerIndex);
 }
-
-void AChessActor::OnMovingEndBroadcast()
-{
-	OnMovingEnd.Broadcast(this);
-}
-
-

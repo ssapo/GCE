@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "ChessMoverComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnMovingEnd);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMovingEnd, UChessMoverComponent* const);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class GCE_API UChessMoverComponent : public UActorComponent
