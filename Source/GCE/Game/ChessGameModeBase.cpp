@@ -233,49 +233,22 @@ void AChessGameMode::SetInvisibleAllCells()
 
 void AChessGameMode::SetVisibleMovableCells(AChessActor* const ChessActor)
 {
+	GCE_CHECK(nullptr != ChessActor);
+
 	auto Component = ChessActor->GetComponentByClass(UChessMoverComponent::StaticClass());
-	GCE_CHECK(Component);
+	GCE_CHECK(nullptr != Component);
 
 	auto Mover = Cast<UChessMoverComponent>(Component);
-	GCE_CHECK(Mover);
+	GCE_CHECK(nullptr != Mover);
 
-	if (Mover->HasFirstSpecialMove() && Mover->IsFirstMove())
-	{
-		SetVisibleMovableCells(
-			ChessActor->GetChessTeam(),
-			Mover->GetCell(),
-			Mover->GetFirstMoveDirections(),
-			Mover->IsPercistance()
-		);
-	}
-	else
-	{
-		SetVisibleMovableCells(
-			ChessActor->GetChessTeam(),
-			Mover->GetCell(),
-			Mover->GetMoveDirections(),
-			Mover->IsPercistance()
-		);
-	}
+	const FIntPoint& CurrPosition = Mover->GetCell();
+	const TArray<FIntPoint>& Directions = Mover->GetMoveDirections();
+	const EChessTeam& TeamOfActor = ChessActor->GetChessTeam();
+	bool bPersistance = Mover->IsPercistance();
 
-	SetVisibleAttackableCells(
-		ChessActor->GetChessTeam(),
-		Mover->GetCell(),
-		Mover->GetAttackDirections(),
-		Mover->IsPercistance()
-	);
-}
-
-void AChessGameMode::SetVisibleMovableCells(
-	const EChessTeam& TeamOfActor,
-	const FIntPoint& CurrPosition,
-	const TArray<FIntPoint>& Directions,
-	bool bPersistance
-)
-{
 	for (const FIntPoint& e : Directions)
 	{
-		FIntPoint NextPosition = CurrPosition;
+		FIntPoint NextPosition = Mover->GetCell();
 		bool bLocalPersistance = bPersistance;
 		do
 		{
@@ -291,40 +264,6 @@ void AChessGameMode::SetVisibleMovableCells(
 					if (UChessFuncs::IsEqualTeam(TeamOfActor, ChessPiece->GetChessTeam()))
 					{
 						MoverPieceActor->SetVisiblity(false);
-					}
-				}
-			}
-			else
-			{
-				bLocalPersistance = false;
-			}
-		} while (bLocalPersistance);
-	}
-}
-
-void AChessGameMode::SetVisibleAttackableCells(
-	const EChessTeam& TeamOfActor,
-	const FIntPoint& CurrPosition,
-	const TArray<FIntPoint>& Directions,
-	bool bPersistance
-)
-{
-	for (const FIntPoint& e : Directions)
-	{
-		FIntPoint NextPosition = CurrPosition;
-		bool bLocalPersistance = bPersistance;
-		do
-		{
-			NextPosition += e;
-			if (AChessActor * MoverPieceActor = GetMoverPieceFromMap(NextPosition))
-			{
-				if (AChessActor * ChessPiece = GetChessPieceFromMap(NextPosition))
-				{
-					bLocalPersistance = false;
-
-					if (false == UChessFuncs::IsEqualTeam(TeamOfActor, ChessPiece->GetChessTeam()))
-					{
-						MoverPieceActor->SetVisiblity(true);
 					}
 				}
 			}

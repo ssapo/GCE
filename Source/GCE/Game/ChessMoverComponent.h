@@ -32,13 +32,7 @@ public:
 		void SetIntervalVector(const FVector& Value) { IntervalVector = Value; }
 
 	UFUNCTION(BlueprintPure)
-		TArray<FIntPoint> GetAttackDirections() const { return AttackDirections; }
-
-	UFUNCTION(BlueprintPure)
 		TArray<FIntPoint> GetMoveDirections() const { return MoveDirections; }
-
-	UFUNCTION(BlueprintPure)
-		TArray<FIntPoint> GetFirstMoveDirections() const { return AttackDirections; }
 
 	UFUNCTION(BlueprintPure)
 		FIntPoint GetCell() const { return CurrentPoint; }
@@ -57,9 +51,6 @@ public:
 
 	UFUNCTION(BlueprintPure)
 		bool IsFirstMove() const { return bFirstMove; }
-
-	UFUNCTION(BlueprintPure)
-		bool HasFirstSpecialMove() const { return FirstMoveDirections.Num() > 0; }
 
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -83,14 +74,11 @@ private:
 	bool bFirstMove;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mover|Direction", Meta = (AllowPrivateAccess = true))
-		TArray<FIntPoint> AttackDirections;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mover|Direction", Meta = (AllowPrivateAccess = true))
 		TArray<FIntPoint> MoveDirections;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mover|Direction", Meta = (AllowPrivateAccess = true))
-		TArray<FIntPoint> FirstMoveDirections;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mover|Direction", Meta = (AllowPrivateAccess = true))
 		bool bPercistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mover|Move", Meta = (AllowPrivateAccess = true))
+		bool bHasSpecialMove;
 };

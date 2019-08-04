@@ -53,6 +53,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessTeam", Meta = (AllowPrivateAccess = true))
 		EChessTeam ChessTeamType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessTeam", Meta = (AllowPrivateAccess = true))
+		EChessActor ChessPieceType;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ChessPiece", Meta = (AllowPrivateAccess = true))
 		bool bOutlineEffect;
 

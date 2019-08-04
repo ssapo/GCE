@@ -24,19 +24,6 @@ private:
 	void SetChessPieceIntoMap(class AChessActor* Actor, const FIntPoint& Point);
 	
 	void SetVisibleMovableCells(class AChessActor* const ChessActor);
-	void SetVisibleMovableCells(
-		const EChessTeam& TeamOfActor,
-		const FIntPoint& Position,
-		const TArray<FIntPoint>& Directions,
-		bool bPersistance
-	);
-	void SetVisibleAttackableCells(
-		const EChessTeam& TeamOfActor,
-		const FIntPoint& Position,
-		const TArray<FIntPoint>& Directions,
-		bool bPersistance
-	);
-
 	void SetInvisibleAllCells();
 
 	void OnSelectedChessActor(class AChessActor* const ChessActor);
