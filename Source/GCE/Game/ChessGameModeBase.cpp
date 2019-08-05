@@ -43,10 +43,8 @@ void AChessGameMode::StartPlay()
 	auto BoardClass = GetWorld()->SpawnActor<AChessActor>(ChessBoardClass);
 	GCE_CHECK(nullptr != BoardClass);
 
-
 	// 체스 이동 타일
 	ChessMoveMap.Reset();
-
 	if (nullptr == MovePieceClass)
 	{
 		GCE_LOG(Error, TEXT("nullptr == MovePieceClass"));
@@ -115,13 +113,20 @@ void AChessGameMode::StartPlay()
 
 		ChessPlayer->SetChoosenChessTeam(EChessTeam::White);
 		ChessPlayer->SetMyTurn(true);
-		
-		auto Actor = Cast<AActor>(ChessPlayer->GetPawn());
-		Actor->SetActorLocation(FVector(-550.0f, -380.0f, 720.0f));
+
+		/*if (auto Pawn = ChessPlayer->GetPawn())
+		{
+			Pawn->SetActorLocation(FVector(-550.0f, 0.0f, 720.0f));
+
+			if (auto CamManager = ChessPlayer->PlayerCameraManager)
+			{
+				CamManager->AttachToActor(Pawn, FAttachmentTransformRules::KeepWorldTransform);
+				Pawn->SetActorRotation(FRotator(50.0f, 0.0f, -50.0f));
+			}
+		}*/
 	}
 
 	bWaitAnimation = false;
-
 }
 
 void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
