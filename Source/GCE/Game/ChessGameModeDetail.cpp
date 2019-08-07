@@ -8,7 +8,7 @@
 
 void AChessGameMode::ProcessPiecesAreSameTeam(AChessActor* const ChessActor)
 {
-	AChessActor* const ClickedCurrentActor = ChessPlayer->GetCurrentClickedActor();
+	AChessActor* const ClickedCurrentActor = ChessPlayerPtr->GetCurrentClickedActor();
 	if (nullptr == ClickedCurrentActor)
 	{
 		// Goto case 1.
@@ -34,7 +34,7 @@ void AChessGameMode::ProcessPiecesAreSameTeam(AChessActor* const ChessActor)
 
 void AChessGameMode::ProcessPiecesAreOtherTeam(AChessActor* const ChessActor)
 {
-	AChessActor* const ClickedCurrentActor = ChessPlayer->GetCurrentClickedActor();
+	AChessActor* const ClickedCurrentActor = ChessPlayerPtr->GetCurrentClickedActor();
 	if (nullptr == ClickedCurrentActor)
 	{
 		// Goto case 4.
@@ -60,14 +60,14 @@ void AChessGameMode::ProcessPiecesAreOtherTeam(AChessActor* const ChessActor)
 
 void AChessGameMode::ProcessClickedMovePiece(AChessActor* const ChessActor)
 {
-	AChessActor* const CurrentIsNotNull = ChessPlayer->GetCurrentClickedActor();
+	AChessActor* const CurrentIsNotNull = ChessPlayerPtr->GetCurrentClickedActor();
 	if (nullptr == CurrentIsNotNull)
 	{
 		GCE_LOG(Error, TEXT("AChessGameMode::ProcessClickedMovePiece(..) CurrentIsNotNull is Null"));
 		return;
 	}
 
-	const EChessTeam& PlayerTeam = ChessPlayer->GetChoosenChessTeam();
+	const EChessTeam& PlayerTeam = ChessPlayerPtr->GetChoosenChessTeam();
 	const EChessTeam& CurrentClickedActorTeam = CurrentIsNotNull->GetChessTeam();
 
 	if (UChessFuncs::IsEqualTeam(PlayerTeam, CurrentClickedActorTeam))
@@ -84,14 +84,14 @@ void AChessGameMode::ProcessClickedMovePiece(AChessActor* const ChessActor)
 
 void AChessGameMode::SameTeamCurrentIsNull(AChessActor* const ChessActor)
 {
-	ChessPlayer->ChangeCurrentClickedActor(ChessActor);
+	ChessPlayerPtr->ChangeCurrentClickedActor(ChessActor);
 
 	SetVisibleMovableCells(ChessActor);
 }
 
 void AChessGameMode::SameTeamCurrentIsSameTeam(AChessActor* const ChessActor)
 {
-	ChessPlayer->ChangeCurrentClickedActor(ChessActor);
+	ChessPlayerPtr->ChangeCurrentClickedActor(ChessActor);
 
 	SetInvisibleAllCells();
 
@@ -100,7 +100,7 @@ void AChessGameMode::SameTeamCurrentIsSameTeam(AChessActor* const ChessActor)
 
 void AChessGameMode::SameTeamCurrentIsOtherTeam(AChessActor* const ChessActor)
 {
-	ChessPlayer->ChangeCurrentClickedActor(ChessActor);
+	ChessPlayerPtr->ChangeCurrentClickedActor(ChessActor);
 
 	SetInvisibleAllCells();
 	
@@ -109,14 +109,14 @@ void AChessGameMode::SameTeamCurrentIsOtherTeam(AChessActor* const ChessActor)
 
 void AChessGameMode::OtherTeamCurrentIsNull(AChessActor* const ChessActor)
 {
-	ChessPlayer->ChangeCurrentClickedActor(ChessActor);
+	ChessPlayerPtr->ChangeCurrentClickedActor(ChessActor);
 
 	SetVisibleMovableCells(ChessActor);
 }
 
 void AChessGameMode::OtherTeamCurrentIsSameTeam(AChessActor* const ChessActor)
 {
-	ChessPlayer->ChangeCurrentClickedActor(ChessActor);
+	ChessPlayerPtr->ChangeCurrentClickedActor(ChessActor);
 
 	SetInvisibleAllCells();
 
@@ -125,7 +125,7 @@ void AChessGameMode::OtherTeamCurrentIsSameTeam(AChessActor* const ChessActor)
 
 void AChessGameMode::OtherTeamCurrentIsOtherTeam(AChessActor* const ChessActor)
 {
-	ChessPlayer->ChangeCurrentClickedActor(ChessActor);
+	ChessPlayerPtr->ChangeCurrentClickedActor(ChessActor);
 
 	SetInvisibleAllCells();
 
@@ -134,7 +134,7 @@ void AChessGameMode::OtherTeamCurrentIsOtherTeam(AChessActor* const ChessActor)
 
 void AChessGameMode::MovePieceCurrentIsSameTeam(AChessActor* const ChessActor)
 {
-	auto CurrActor = ChessPlayer->GetCurrentClickedActor();
+	auto CurrActor = ChessPlayerPtr->GetCurrentClickedActor();
 	GCE_CHECK(nullptr != CurrActor);
 
 	auto Component = ChessActor->GetComponentByClass(UChessMoverComponent::StaticClass());
@@ -160,7 +160,7 @@ void AChessGameMode::MovePieceCurrentIsSameTeam(AChessActor* const ChessActor)
 
 	Mover->SetCellPoint(NewPoint);
 
-	ChessPlayer->ChangeCurrentClickedActor(nullptr);
+	ChessPlayerPtr->ChangeCurrentClickedActor(nullptr);
 
 	SetInvisibleAllCells();
 
@@ -169,7 +169,7 @@ void AChessGameMode::MovePieceCurrentIsSameTeam(AChessActor* const ChessActor)
 
 void AChessGameMode::MovePieceCurrentIsOtherTeam(AChessActor* const ChessActor)
 {
-	ChessPlayer->ChangeCurrentClickedActor(nullptr);
+	ChessPlayerPtr->ChangeCurrentClickedActor(nullptr);
 
 	SetInvisibleAllCells();
 }

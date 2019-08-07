@@ -8,6 +8,7 @@
 #include "ChessPlayerState.h"
 #include "ChessFuncs.h"
 #include "ChessMoverComponent.h"
+#include "ChessCameraPawn.h"
 
 AChessGameMode::AChessGameMode()
 {
@@ -26,6 +27,10 @@ AChessGameMode::AChessGameMode()
 
 	StartInitializeLocation = FVector(-350.0f, -350.0f, 50.0f);
 	StartIntervalLocation = FVector(100.0f, 100.0f, 0.0f);
+	WhiteCameraTransform.SetLocation(FVector(0.0f, -550.0f, 600.0f));
+	WhiteCameraTransform.SetRotation(FQuat(FRotator(-50.0f, 90.0f, 0.0f)));
+	BlackCameraTransform.SetLocation(FVector(0.0f, 550.0f, 600.0f));
+	BlackCameraTransform.SetRotation(FQuat(FRotator(-50.0f, -90.0f, 0.0f)));
 }
 
 void AChessGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -109,21 +114,16 @@ void AChessGameMode::StartPlay()
 
 	if (auto PC = GetWorld()->GetFirstPlayerController<AChessPlayerController>())
 	{
-		ChessPlayer = PC;
+		ChessPlayerPtr = PC;
 
-		ChessPlayer->SetChoosenChessTeam(EChessTeam::White);
-		ChessPlayer->SetMyTurn(true);
+		ChessPlayerPtr->SetChoosenChessTeam(EChessTeam::White);
+		ChessPlayerPtr->SetMyTurn(true);
 
-		/*if (auto Pawn = ChessPlayer->GetPawn())
+		if (auto ChessCamera = Cast<AChessCameraPawn>(ChessPlayerPtr->GetPawn()))
 		{
-			Pawn->SetActorLocation(FVector(-550.0f, 0.0f, 720.0f));
-
-			if (auto CamManager = ChessPlayer->PlayerCameraManager)
-			{
-				CamManager->AttachToActor(Pawn, FAttachmentTransformRules::KeepWorldTransform);
-				Pawn->SetActorRotation(FRotator(50.0f, 0.0f, -50.0f));
-			}
-		}*/
+			ChessCameraPtr = ChessCamera;
+			ChessCameraPtr->SetCameraTransform(WhiteCameraTransform);
+		}
 	}
 
 	bWaitAnimation = false;
@@ -143,7 +143,7 @@ void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
 		return;
 	}
 
-	if (ChessPlayer.IsValid() && ChessPlayer->IsMyTurn())
+	if (ChessPlayerPtr.IsValid() && ChessPlayerPtr->IsMyTurn())
 	{
 		if (ChessActor->IsA(MovePieceClass))
 		{
@@ -163,7 +163,7 @@ void AChessGameMode::OnMovingEndChessActor(UChessMoverComponent* const Mover)
 
 void AChessGameMode::ProcessClickedChessPiece(AChessActor* const ChessActor)
 {
-	const EChessTeam& PlayerTeam = ChessPlayer->GetChoosenChessTeam();
+	const EChessTeam& PlayerTeam = ChessPlayerPtr->GetChoosenChessTeam();
 	const EChessTeam& SelectedActorTeam = ChessActor->GetChessTeam();
 
 	if (UChessFuncs::IsEqualTeam(PlayerTeam, SelectedActorTeam))

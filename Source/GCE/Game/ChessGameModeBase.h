@@ -4,6 +4,7 @@
 
 #include "GCE.h"
 #include "GameFramework/GameMode.h"
+#include "Core/Public/Math/TransformVectorized.h"
 #include "ChessGameModeBase.generated.h"
 
 UCLASS()
@@ -86,7 +87,15 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Map", Meta = (AllowPrivateAccess = true))
 		FVector StartIntervalLocation;
 
-	TWeakObjectPtr<class AChessPlayerController> ChessPlayer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Camera", Meta = (AllowPrivateAccess = true))
+		FTransform WhiteCameraTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Camera", Meta = (AllowPrivateAccess = true))
+		FTransform BlackCameraTransform;
+
+	TWeakObjectPtr<class AChessCameraPawn> ChessCameraPtr;
+
+	TWeakObjectPtr<class AChessPlayerController> ChessPlayerPtr;
 
 	bool bWaitAnimation;
 };
