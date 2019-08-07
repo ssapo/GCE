@@ -30,8 +30,6 @@ void AChessCameraPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void AChessCameraPawn::SetCameraTransform(const FTransform& Transform)
 {
 	GCE_CHECK(nullptr != CameraComponent);
-	//SetActorLocation(Transform.GetLocation());
-	CameraComponent->SetRelativeLocation(Transform.GetLocation());
-	CameraComponent->SetRelativeRotation(Transform.GetRotation());
+	CameraComponent->SetWorldTransform(Transform);
 }
 

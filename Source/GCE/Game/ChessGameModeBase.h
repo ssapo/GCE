@@ -19,7 +19,12 @@ public:
 
 	virtual void StartPlay() override;
 
+public:
+	void ChangeTeam();
+
 private:
+	void SettingTeam(const EChessTeam& Team);
+
 	class AChessActor* GetMoverPieceFromMap(const FIntPoint& Point) const;
 	class AChessActor* GetChessPieceFromMap(const FIntPoint& Point) const;
 	void SetChessPieceIntoMap(class AChessActor* Actor, const FIntPoint& Point);
@@ -58,7 +63,7 @@ private:
 	
 	//Case 8: MovePiece , Current is OtherTeam
 	void MovePieceCurrentIsOtherTeam(class AChessActor* const ChessActor);
-
+	
 private:
 	static constexpr int32 CHESS_WIDTH = 8;
 	static constexpr int32 CHESS_HEIGHT = 8;

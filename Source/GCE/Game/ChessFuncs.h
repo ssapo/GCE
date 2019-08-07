@@ -16,8 +16,8 @@ public:
 		static bool IsEqualTeam(const EChessTeam& Team1, const EChessTeam& Team2); 
 
 	UFUNCTION(BlueprintPure, Category = "Chess|Misc")
-		static bool IsEqualTeamBetweenTwoActors(class AChessActor* Team1, class AChessActor* Team2);
+		static bool IsBlackTeam(const EChessTeam& Team);
 
 	UFUNCTION(BlueprintPure, Category = "Chess|Misc")
-		static bool IsEqualTeamBetweenActorAndPlayer(class AChessActor* Actor, class AChessPlayerController* Player);
+		static bool IsWhiteTeam(const EChessTeam& Team);
 };

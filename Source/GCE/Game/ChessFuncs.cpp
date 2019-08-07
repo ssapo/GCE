@@ -9,32 +9,12 @@ bool UChessFuncs::IsEqualTeam(const EChessTeam& Team1, const EChessTeam& Team2)
 	return (Team1 == Team2);
 }
 
-bool UChessFuncs::IsEqualTeamBetweenTwoActors(class AChessActor* Actor1, class AChessActor* Actor2)
+bool UChessFuncs::IsBlackTeam(const EChessTeam& Team)
 {
-	if (nullptr == Actor1)
-	{
-		return false;
-	}
-
-	if (nullptr == Actor2)
-	{ 
-		return false;
-	}
-
-	return IsEqualTeam(Actor1->GetChessTeam(), Actor2->GetChessTeam());
+	return IsEqualTeam(EChessTeam::Black, Team);
 }
 
-bool UChessFuncs::IsEqualTeamBetweenActorAndPlayer(class AChessActor* Actor, class AChessPlayerController* Player)
+bool UChessFuncs::IsWhiteTeam(const EChessTeam& Team)
 {
-	if (nullptr == Actor)
-	{
-		return false;
-	}
-
-	if (nullptr == Player)
-	{
-		return false;
-	}
-
-	return IsEqualTeam(Actor->GetChessTeam(), Player->GetChoosenChessTeam());
+	return IsEqualTeam(EChessTeam::White, Team);
 }

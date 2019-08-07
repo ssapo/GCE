@@ -112,21 +112,51 @@ void AChessGameMode::StartPlay()
 		}
 	}
 
-	if (auto PC = GetWorld()->GetFirstPlayerController<AChessPlayerController>())
-	{
-		ChessPlayerPtr = PC;
+	auto PC = GetWorld()->GetFirstPlayerController<AChessPlayerController>();
+	GCE_CHECK(nullptr != PC);
+	ChessPlayerPtr = PC;
 
-		ChessPlayerPtr->SetChoosenChessTeam(EChessTeam::White);
-		ChessPlayerPtr->SetMyTurn(true);
+	auto ChessCamera = Cast<AChessCameraPawn>(ChessPlayerPtr->GetPawn());
+	GCE_CHECK(nullptr != ChessCamera);
+	ChessCameraPtr = ChessCamera;
 
-		if (auto ChessCamera = Cast<AChessCameraPawn>(ChessPlayerPtr->GetPawn()))
-		{
-			ChessCameraPtr = ChessCamera;
-			ChessCameraPtr->SetCameraTransform(WhiteCameraTransform);
-		}
-	}
+	SettingTeam(EChessTeam::White);
 
 	bWaitAnimation = false;
+}
+
+void AChessGameMode::SettingTeam(const EChessTeam& Team)
+{
+	if (ChessCameraPtr.IsValid() && ChessPlayerPtr.IsValid())
+	{
+		ChessPlayerPtr->SetChoosenChessTeam(Team);
+		ChessPlayerPtr->SetMyTurn(true);
+
+		if (UChessFuncs::IsWhiteTeam(Team))
+		{
+			ChessCameraPtr->SetCameraTransform(WhiteCameraTransform);
+		}
+		else if (UChessFuncs::IsBlackTeam(Team))
+		{
+			ChessCameraPtr->SetCameraTransform(BlackCameraTransform);
+		}
+	}
+}
+
+void AChessGameMode::ChangeTeam()
+{
+	if (ChessCameraPtr.IsValid() && ChessPlayerPtr.IsValid())
+	{
+		auto Team = ChessPlayerPtr->GetChoosenChessTeam();
+		if (UChessFuncs::IsWhiteTeam(Team))
+		{
+			SettingTeam(EChessTeam::Black);
+		}
+		else if (UChessFuncs::IsBlackTeam(Team))
+		{
+			SettingTeam(EChessTeam::White);
+		}
+	}
 }
 
 void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
