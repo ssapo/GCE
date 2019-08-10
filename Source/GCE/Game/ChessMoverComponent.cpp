@@ -46,6 +46,13 @@ void UChessMoverComponent::SetCellY(int32 NewY)
 	SetCellXY(CurrentPoint.X, NewY);
 }
 
+void UChessMoverComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	bFirstMove = true;
+}
+
 void UChessMoverComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);

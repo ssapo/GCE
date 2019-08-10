@@ -9,6 +9,7 @@
 #include "ChessFuncs.h"
 #include "ChessMoverComponent.h"
 #include "ChessCameraPawn.h"
+#include "Mover/PawnMoverComponent.h"
 
 AChessGameMode::AChessGameMode()
 {
@@ -55,18 +56,27 @@ void AChessGameMode::StartPlay()
 		GCE_LOG(Error, TEXT("nullptr == MovePieceClass"));
 	}
 
-	for (int Y = 0; Y < CHESS_HEIGHT; ++Y)
+	for (int32 Y = 0; Y < CHESS_HEIGHT; ++Y)
 	{
-		for (int X = 0; X < CHESS_WIDTH; ++X)
+		for (int32 X = 0; X < CHESS_WIDTH; ++X)
 		{
 			FVector NewLocation = StartInitializeLocation;
 			if (AChessActor * Actor = GetWorld()->SpawnActor<AChessActor>(MovePieceClass))
 			{
-				NewLocation -= FVector(StartIntervalLocation.X * X, StartIntervalLocation.Y * Y, 0);
 				Actor->SetVisiblity(false);
 				Actor->OnSelected.AddUObject(this, &AChessGameMode::OnSelectedChessActor);
 				Actor->SetActorLocation(NewLocation);
+
 				//Actor->OnMovingEnd.AddUObject(this, &AChessGameMode::OnMovingEndChessActor);
+				auto Component = Actor->GetComponentByClass(UChessMoverComponent::StaticClass());
+				if (nullptr == Component) { continue; }
+
+				auto Mover = Cast<UChessMoverComponent>(Component);
+				if (nullptr == Mover) { continue; }
+
+				Mover->SetIntervalVector(StartIntervalLocation);
+				Mover->SetCellXY(X, Y);
+				Mover->OnMovingEnd.AddUObject(this, &AChessGameMode::OnMovingEndChessActor);
 
 				ChessMoveMap.Add(Actor);
 			}
@@ -75,12 +85,12 @@ void AChessGameMode::StartPlay()
 
 	// Ã¼½º ¸Ê
 	ChessGameMap.Reset();
-	for (int y = 0; y < CHESS_HEIGHT; ++y)
+	for (int32 Y = 0; Y < CHESS_HEIGHT; ++Y)
 	{
-		for (int x = 0; x < CHESS_WIDTH; ++x)
+		for (int32 X = 0; X < CHESS_WIDTH; ++X)
 		{
 			FVector NewLocation = StartInitializeLocation;
-			EChessActor Key = EChessActor(ChessStartMap[y * CHESS_WIDTH + x]);
+			EChessActor Key = EChessActor(ChessStartMap[Y * CHESS_WIDTH + X]);
 			if (Key != EChessActor::NONE)
 			{
 				auto CBoard = ChessActors[Key];
@@ -100,7 +110,7 @@ void AChessGameMode::StartPlay()
 				if (nullptr == Mover) { continue; }
 				
 				Mover->SetIntervalVector(StartIntervalLocation);
-				Mover->SetCellXY(x, y);
+				Mover->SetCellXY(X, Y);
 				Mover->OnMovingEnd.AddUObject(this, &AChessGameMode::OnMovingEndChessActor);
 				
 				ChessGameMap.Add(Actor);
@@ -275,39 +285,98 @@ void AChessGameMode::SetVisibleMovableCells(AChessActor* const ChessActor)
 	auto Component = ChessActor->GetComponentByClass(UChessMoverComponent::StaticClass());
 	GCE_CHECK(nullptr != Component);
 
-	auto Mover = Cast<UChessMoverComponent>(Component);
-	GCE_CHECK(nullptr != Mover);
+	auto ChessActorMover = Cast<UChessMoverComponent>(Component);
+	GCE_CHECK(nullptr != ChessActorMover);
 
-	const FIntPoint& CurrPosition = Mover->GetCell();
-	const TArray<FIntPoint>& Directions = Mover->GetMoveDirections();
-	const EChessTeam& TeamOfActor = ChessActor->GetChessTeam();
-	bool bPersistance = Mover->IsPercistance();
-
-	for (const FIntPoint& e : Directions)
 	{
-		FIntPoint NextPosition = Mover->GetCell();
-		bool bLocalPersistance = bPersistance;
-		do
+		const FIntPoint& CurrPosition = ChessActorMover->GetCell();
+		const TArray<FIntPoint>& Directions = ChessActorMover->GetMoveDirections();
+		const EChessTeam& TeamOfActor = ChessActor->GetChessTeam();
+		bool bPersistance = ChessActorMover->IsPercistance();
+
+		for (FIntPoint E : Directions)
 		{
-			NextPosition += e;
-			if (AChessActor * MoverPieceActor = GetMoverPieceFromMap(NextPosition))
+			if (ChessActorMover->HasTeamDirection() && UChessFuncs::IsBlackTeam(TeamOfActor))
 			{
-				MoverPieceActor->SetVisiblity(true);
+				E *= -1;
+			}
 
-				if (AChessActor * ChessPiece = GetChessPieceFromMap(NextPosition))
+			FIntPoint NextPosition = CurrPosition;
+			bool bLocalPersistance = bPersistance;
+			do
+			{
+				NextPosition += E;
+				if (AChessActor * MoverPieceActor = GetMoverPieceFromMap(NextPosition))
 				{
-					bLocalPersistance = false;
+					MoverPieceActor->SetVisiblity(true);
 
-					if (UChessFuncs::IsEqualTeam(TeamOfActor, ChessPiece->GetChessTeam()))
+					if (AChessActor * ChessPiece = GetChessPieceFromMap(NextPosition))
 					{
-						MoverPieceActor->SetVisiblity(false);
+						bLocalPersistance = false;
+
+						if (UChessFuncs::IsEqualTeam(TeamOfActor, ChessPiece->GetChessTeam()))
+						{
+							MoverPieceActor->SetVisiblity(false);
+						}
+					}
+					else if (ChessActorMover->HasSpecialMove())
+					{
+						if (ChessActorMover->IsFirstMove())
+						{
+							if (ChessActorMover->IsA(UPawnMoverComponent::StaticClass()))
+							{
+								bLocalPersistance = true;
+							}
+						}
+						else
+						{
+							bLocalPersistance = false;
+						}
 					}
 				}
-			}
-			else
+				else
+				{
+					bLocalPersistance = false;
+				}
+			} while (bLocalPersistance);
+		}
+	}
+
+	{
+		const FIntPoint& CurrPosition = ChessActorMover->GetCell();
+		const TArray<FIntPoint>& Directions = ChessActorMover->GetAttackDirections();
+		const EChessTeam& TeamOfActor = ChessActor->GetChessTeam();
+		bool bPersistance = ChessActorMover->IsPercistance();
+
+		for (FIntPoint E : Directions)
+		{
+			if (ChessActorMover->HasTeamDirection() && UChessFuncs::IsBlackTeam(TeamOfActor))
 			{
-				bLocalPersistance = false;
+				E *= -1;
 			}
-		} while (bLocalPersistance);
+
+			FIntPoint NextPosition = CurrPosition;
+			bool bLocalPersistance = bPersistance;
+			do
+			{
+				NextPosition += E;
+				if (AChessActor * MoverPieceActor = GetMoverPieceFromMap(NextPosition))
+				{
+					if (AChessActor * ChessPiece = GetChessPieceFromMap(NextPosition))
+					{
+						bLocalPersistance = false;
+						if (!UChessFuncs::IsEqualTeam(TeamOfActor, ChessPiece->GetChessTeam()))
+						{
+							MoverPieceActor->SetVisiblity(true);
+						}
+					}
+				}
+				else
+				{
+					bLocalPersistance = false;
+				}
+			} while (bLocalPersistance);
+		}
 	}
 }
+

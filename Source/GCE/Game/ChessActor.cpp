@@ -18,34 +18,6 @@ AChessActor::AChessActor()
 	ChessBody = nullptr;
 }
 
-void AChessActor::InitChessActor(class UMeshComponent* Piece)
-{
-	GCE_CHECK(nullptr != Piece);
-	ChessBody = Piece;
-}
-
-void AChessActor::SetOutlineEffect(bool bToggle)
-{
-	if (ChessBody)
-	{
-		ChessBody->SetRenderCustomDepth(bOutlineEffect && bToggle);
-	}
-}
-
-void AChessActor::SetVisiblity(bool bToggle)
-{
-	if (bVisiblityToggled != bToggle)
-	{
-		bVisiblityToggled = bToggle;
-
-		if (ChessBody)
-		{
-			ChessBody->SetVisibility(bVisiblityToggled);
-		}
-	}
-}
-
-// Called when the game starts or when spawned
 void AChessActor::BeginPlay()
 {
 	Super::BeginPlay();
@@ -84,4 +56,41 @@ void AChessActor::NotifyActorOnInputTouchLeave(const ETouchIndex::Type FingerInd
 {
 	GCE_LOG(Log, TEXT("Name [%s]"), *GetName());
 	Super::NotifyActorOnInputTouchLeave(FingerIndex);
+}
+
+void AChessActor::InitChessActor(class UMeshComponent* Piece)
+{
+	GCE_CHECK(nullptr != Piece);
+	ChessBody = Piece;
+}
+
+void AChessActor::SetOutlineEffect(bool bToggle)
+{
+	if (ChessBody)
+	{
+		ChessBody->SetRenderCustomDepth(bOutlineEffect && bToggle);
+	}
+}
+
+void AChessActor::SetVisiblity(bool bToggle)
+{
+	if (bVisiblityToggled != bToggle)
+	{
+		bVisiblityToggled = bToggle;
+
+		if (ChessBody)
+		{
+			ChessBody->SetVisibility(bVisiblityToggled);
+		}
+	}
+}
+
+FORCEINLINE bool AChessActor::GetVisiblity() const
+{
+	return bVisiblityToggled;
+}
+
+FORCEINLINE EChessTeam AChessActor::GetChessTeam() const
+{
+	return ChessTeamType;
 }
