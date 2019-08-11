@@ -33,3 +33,8 @@ void AChessCameraPawn::SetCameraTransform(const FTransform& Transform)
 	CameraComponent->SetWorldTransform(Transform);
 }
 
+void AChessCameraPawn::SetCameraMoving(bool bToggleValue)
+{
+
+}
+

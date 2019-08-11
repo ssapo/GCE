@@ -169,6 +169,38 @@ void AChessGameMode::ChangeTeam()
 	}
 }
 
+void AChessGameMode::Change2DCamera()
+{
+	if (ChessCameraPtr.IsValid())
+	{
+		ChessCameraPtr->SetCameraTransform(Chess2DCameraTransform);
+	}
+}
+
+void AChessGameMode::Change3DCamera()
+{
+	if (ChessCameraPtr.IsValid())
+	{
+		ChessCameraPtr->SetCameraTransform(Chess2DCameraTransform);
+	}
+}
+
+void AChessGameMode::LockCameraMoving()
+{
+	if (ChessCameraPtr.IsValid())
+	{
+		ChessCameraPtr->SetCameraMoving(true);
+	}
+}
+
+void AChessGameMode::UnlockCameraMoving()
+{
+	if (ChessCameraPtr.IsValid())
+	{
+		ChessCameraPtr->SetCameraMoving(false);
+	}
+}
+
 void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
 {
 	if (bWaitAnimation)

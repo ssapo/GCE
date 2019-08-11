@@ -21,6 +21,10 @@ public:
 
 public:
 	void ChangeTeam();
+	void Change2DCamera();
+	void Change3DCamera();
+	void LockCameraMoving();
+	void UnlockCameraMoving();
 
 private:
 	void SettingTeam(const EChessTeam& Team);
@@ -97,6 +101,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Camera", Meta = (AllowPrivateAccess = true))
 		FTransform BlackCameraTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Camera", Meta = (AllowPrivateAccess = true))
+		FTransform Chess2DCameraTransform;
 
 	TWeakObjectPtr<class AChessCameraPawn> ChessCameraPtr;
 
