@@ -21,6 +21,8 @@ AChessActor::AChessActor()
 void AChessActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GCE_LOG(Log, TEXT("Name [%s] [Spawned]"), *GetName());
 }
 
 void AChessActor::NotifyActorOnClicked(FKey ButtonPressed)

@@ -13,11 +13,17 @@ class GCE_API UChessFuncs : public UBlueprintFunctionLibrary
 
 public:
 	UFUNCTION(BlueprintPure, Category = "Chess|Misc")
-		static bool IsEqualTeam(const EChessTeam& Team1, const EChessTeam& Team2); 
+		static bool IsEqualTeam(const EChessTeam& Team1, const EChessTeam& Team2);
 
 	UFUNCTION(BlueprintPure, Category = "Chess|Misc")
 		static bool IsBlackTeam(const EChessTeam& Team);
 
 	UFUNCTION(BlueprintPure, Category = "Chess|Misc")
 		static bool IsWhiteTeam(const EChessTeam& Team);
+
+	UFUNCTION(BlueprintPure, Category = "Chess|Misc")
+		static bool IsNoneTeam(const EChessTeam& Team);
+
+	UFUNCTION(BlueprintPure, Category = "Chess|Misc")
+		static EChessTeam GetOpponentTeam(const EChessTeam& Team);
 };

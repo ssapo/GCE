@@ -17,16 +17,16 @@ public:
 	UChessMoverComponent();
 
 	UFUNCTION(BlueprintCallable)
-		void SetCellPoint(const FIntPoint& NewP);
+		void SetCellPoint(const FIntPoint& NewP, bool NeedAnim = true);
 
 	UFUNCTION(BlueprintCallable)
-		void SetCellXY(int32 NewX, int32 NewY);
+		void SetCell(int32 NewX, int32 NewY, bool NeedAnim = true);
 
 	UFUNCTION(BlueprintCallable)
-		void SetCellX(int32 NewX);
+		void SetCellX(int32 NewX, bool NeedAnim = true);
 
 	UFUNCTION(BlueprintCallable)
-		void SetCellY(int32 NewY);
+		void SetCellY(int32 NewY, bool NeedAnim = true);
 
 	UFUNCTION(BlueprintCallable)
 		void SetIntervalVector(const FVector& Value) { IntervalVector = Value; }
@@ -50,10 +50,10 @@ public:
 		bool IsPercistance() const { return bPercistance; }
 
 	UFUNCTION(BlueprintCallable)
-		void SetFirstMove(bool Value) { bFirstMove = Value; }
+		void SetFirstMove(bool Value) { bChessFirstMove = Value; }
 
 	UFUNCTION(BlueprintPure)
-		bool IsFirstMove() const { return bFirstMove; }
+		bool IsFirstMove() const { return bChessFirstMove; }
 
 	UFUNCTION(BlueprintPure)
 		bool HasSpecialMove() const { return bHasSpecialMove; }
@@ -65,6 +65,7 @@ public:
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
+	virtual bool InintializeBeginPlay();
 	void MoveToDesiredPosition(float DeltaTime);
 
 public:
@@ -81,7 +82,9 @@ protected:
 
 	bool bMoving;
 
-	bool bFirstMove;
+	bool bChessFirstMove;
+
+	bool bInitializedMove;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Direction", Meta = (AllowPrivateAccess = true))
 		TArray<FIntPoint> MoveDirections;

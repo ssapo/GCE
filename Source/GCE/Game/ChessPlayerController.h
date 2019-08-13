@@ -27,20 +27,23 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void ChangeCurrentClickedActor(class AChessActor* ClickedActor);
 	
-	UFUNCTION(BlueprintPure)
+	UFUNCTION(BlueprintPure) 
 		class AChessActor* GetCurrentClickedActor() const;
 
-	UFUNCTION(BlueprintCallable)
-		void SetChoosenChessTeam(const EChessTeam& Team) { ChoosenChessTeam = Team; }
+	UFUNCTION(BlueprintCallable) 
+		void SetChoosenChessTeam(const EChessTeam& Team);
 
 	UFUNCTION(BlueprintPure)
-		EChessTeam GetChoosenChessTeam() const { return ChoosenChessTeam; }
-
-	UFUNCTION(BlueprintCallable)
-		void SetMyTurn(bool Value) { bMyTurn = Value; }
+		EChessTeam GetChoosenChessTeam() const;
 
 	UFUNCTION(BlueprintPure)
-		bool IsMyTurn() const { return bMyTurn; }
+		EChessTeam GetOpponentTeam() const;
+
+	UFUNCTION(BlueprintCallable)
+		void SetMyTurn(bool Value);
+
+	UFUNCTION(BlueprintPure)
+		bool IsMyTurn() const;
 
 private:
 	UPROPERTY()

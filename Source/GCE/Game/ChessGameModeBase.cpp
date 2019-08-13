@@ -75,7 +75,7 @@ void AChessGameMode::StartPlay()
 				if (nullptr == Mover) { continue; }
 
 				Mover->SetIntervalVector(StartIntervalLocation);
-				Mover->SetCellXY(X, Y);
+				Mover->SetCell(X, Y, true);
 				Mover->OnMovingEnd.AddUObject(this, &AChessGameMode::OnMovingEndChessActor);
 
 				ChessMoveMap.Add(Actor);
@@ -110,7 +110,7 @@ void AChessGameMode::StartPlay()
 				if (nullptr == Mover) { continue; }
 				
 				Mover->SetIntervalVector(StartIntervalLocation);
-				Mover->SetCellXY(X, Y);
+				Mover->SetCell(X, Y, true);
 				Mover->OnMovingEnd.AddUObject(this, &AChessGameMode::OnMovingEndChessActor);
 				
 				ChessGameMap.Add(Actor);
@@ -131,7 +131,6 @@ void AChessGameMode::StartPlay()
 	ChessCameraPtr = ChessCamera;
 
 	SettingTeam(EChessTeam::White);
-
 	bWaitAnimation = false;
 }
 
@@ -140,14 +139,15 @@ void AChessGameMode::SettingTeam(const EChessTeam& Team)
 	if (ChessCameraPtr.IsValid() && ChessPlayerPtr.IsValid())
 	{
 		ChessPlayerPtr->SetChoosenChessTeam(Team);
-		ChessPlayerPtr->SetMyTurn(true);
 
 		if (UChessFuncs::IsWhiteTeam(Team))
 		{
+			ChessPlayerPtr->SetMyTurn(true);
 			ChessCameraPtr->SetCameraTransform(WhiteCameraTransform);
 		}
 		else if (UChessFuncs::IsBlackTeam(Team))
 		{
+			ChessPlayerPtr->SetMyTurn(false);
 			ChessCameraPtr->SetCameraTransform(BlackCameraTransform);
 		}
 	}
@@ -231,6 +231,7 @@ void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
 void AChessGameMode::OnMovingEndChessActor(UChessMoverComponent* const Mover)
 {
 	bWaitAnimation = false;
+
 }
 
 void AChessGameMode::ProcessClickedChessPiece(AChessActor* const ChessActor)

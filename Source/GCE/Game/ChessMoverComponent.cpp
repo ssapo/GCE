@@ -14,43 +14,61 @@ UChessMoverComponent::UChessMoverComponent()
 
 	MovementSpeed = 1000.0f;
 	bPercistance = false;
-	bMoving = false;
 }
 
-void UChessMoverComponent::SetCellXY(int32 NewX, int32 NewY)
+void UChessMoverComponent::SetCell(int32 NewX, int32 NewY, bool NeedAnim)
 {
-	FVector NewLocation = GetOwner()->GetActorLocation();
+	FVector NewPos = GetOwner()->GetActorLocation();
 
-	float MomvmentX = (NewX - CurrentPoint.X) * IntervalVector.X;
-	float MovementY = (NewY - CurrentPoint.Y) * IntervalVector.Y;
+	float MoveX = (NewX - CurrentPoint.X) * IntervalVector.X;
+	float MoveY = (NewY - CurrentPoint.Y) * IntervalVector.Y;
 	CurrentPoint.X = NewX;
 	CurrentPoint.Y = NewY;
 
-	DesiredPosition = FVector(NewLocation.X + MomvmentX, NewLocation.Y + MovementY, NewLocation.Z);
-	bMoving = true;
-	//GetOwner()->SetActorLocation(NewLocation);
+	if (NeedAnim)
+	{
+		bMoving = true;
+		DesiredPosition = FVector(NewPos.X + MoveX, NewPos.Y + MoveY, NewPos.Z);
+	}
+	else
+	{
+		NewPos.X = MoveX;
+		NewPos.Y = MoveY;
+
+		bMoving = false;
+		GetOwner()->SetActorLocation(NewPos);
+	}
 }
 
-void UChessMoverComponent::SetCellPoint(const FIntPoint& NewP)
+void UChessMoverComponent::SetCellPoint(const FIntPoint& NewP, bool NeedAnim)
 {
-	SetCellXY(NewP.X, NewP.Y);
+	SetCell(NewP.X, NewP.Y, NeedAnim);
 }
 
-void UChessMoverComponent::SetCellX(int32 NewX)
+void UChessMoverComponent::SetCellX(int32 NewX, bool NeedAnim)
 {
-	SetCellXY(NewX, CurrentPoint.Y);
+	SetCell(NewX, CurrentPoint.Y, NeedAnim);
 }
 
-void UChessMoverComponent::SetCellY(int32 NewY)
+void UChessMoverComponent::SetCellY(int32 NewY, bool NeedAnim)
 {
-	SetCellXY(CurrentPoint.X, NewY);
+	SetCell(CurrentPoint.X, NewY, NeedAnim);
 }
 
 void UChessMoverComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	bFirstMove = true;
+	GCE_CHECK(true == InintializeBeginPlay());
+}
+
+bool UChessMoverComponent::InintializeBeginPlay()
+{
+	bMoving = false;
+	bChessFirstMove = true;
+	bInitializedMove = true;
+
+	return true;
 }
 
 void UChessMoverComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

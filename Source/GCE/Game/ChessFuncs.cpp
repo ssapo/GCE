@@ -18,3 +18,22 @@ bool UChessFuncs::IsWhiteTeam(const EChessTeam& Team)
 {
 	return IsEqualTeam(EChessTeam::White, Team);
 }
+
+bool UChessFuncs::IsNoneTeam(const EChessTeam& Team)
+{
+	return IsEqualTeam(EChessTeam::NONE, Team);
+}
+
+EChessTeam UChessFuncs::GetOpponentTeam(const EChessTeam& Team)
+{
+	if (IsWhiteTeam(Team))
+	{
+		return EChessTeam::White;
+	}
+	else if (IsBlackTeam(Team))
+	{
+		return EChessTeam::Black;
+	}
+
+	return EChessTeam::NONE;
+}

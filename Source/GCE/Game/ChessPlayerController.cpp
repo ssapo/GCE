@@ -3,6 +3,7 @@
 
 #include "ChessPlayerController.h"
 #include "ChessActor.h"
+#include "ChessFuncs.h"
 
 AChessPlayerController::AChessPlayerController()
 {
@@ -53,7 +54,7 @@ void AChessPlayerController::ChangeCurrentClickedActor(AChessActor* ClickedActor
 	}
 }
 
-AChessActor* AChessPlayerController::GetCurrentClickedActor() const
+FORCEINLINE AChessActor* AChessPlayerController::GetCurrentClickedActor() const
 {
 	if (CurrentClickedActor.IsValid())
 	{
@@ -61,4 +62,29 @@ AChessActor* AChessPlayerController::GetCurrentClickedActor() const
 	}
 
 	return nullptr;
+}
+
+FORCEINLINE void AChessPlayerController::SetChoosenChessTeam(const EChessTeam& Team)
+{
+	ChoosenChessTeam = Team;
+}
+
+FORCEINLINE EChessTeam AChessPlayerController::GetChoosenChessTeam() const
+{
+	return ChoosenChessTeam;
+}
+
+FORCEINLINE EChessTeam AChessPlayerController::GetOpponentTeam() const
+{
+	return UChessFuncs::GetOpponentTeam(ChoosenChessTeam);
+}
+
+FORCEINLINE void AChessPlayerController::SetMyTurn(bool Value)
+{
+	bMyTurn = Value;
+}
+
+FORCEINLINE bool AChessPlayerController::IsMyTurn() const
+{
+	return bMyTurn;
 }
