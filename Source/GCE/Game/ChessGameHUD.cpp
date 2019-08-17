@@ -2,7 +2,7 @@
 
 
 #include "ChessGameHUD.h"
-#include "ChessUserWidget.h"
+#include "Widgets/ChessUserWidget.h"
 #include "GCE.h"
 
 void AChessGameHUD::DrawHUD()

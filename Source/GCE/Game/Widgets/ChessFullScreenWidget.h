@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Game/ChessUserWidget.h"
+#include "Game/Widgets/ChessUserWidget.h"
 #include "ChessFullScreenWidget.generated.h"
 
 /**

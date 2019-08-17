@@ -20,14 +20,14 @@ public:
 	virtual void StartPlay() override;
 
 public:
-	void ChangeTeam();
+	void ChangeTeam(bool bSettingTurn);
 	void Change2DCamera();
 	void Change3DCamera();
 	void LockCameraMoving();
 	void UnlockCameraMoving();
 
 private:
-	void SettingTeam(const EChessTeam& Team);
+	void SettingTeam(const EChessTeam& Team, bool bSettingTurn);
 
 	class AChessActor* GetMoverPieceFromMap(const FIntPoint& Point) const;
 	class AChessActor* GetChessPieceFromMap(const FIntPoint& Point) const;
@@ -80,6 +80,9 @@ private:
 
 	UPROPERTY()
 		TArray<TWeakObjectPtr<class AChessActor>> ChessMoveMap;
+
+	UPROPERTY()
+		TMap<class UChessMoverComponent*, bool> MoverWaitAnimPool;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Map", Meta = (AllowPrivateAccess = true))
 		UClass* MovePieceClass;

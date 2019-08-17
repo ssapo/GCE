@@ -92,7 +92,7 @@ FORCEINLINE bool AChessActor::GetVisiblity() const
 	return bVisiblityToggled;
 }
 
-FORCEINLINE EChessTeam AChessActor::GetChessTeam() const
+FORCEINLINE EChessTeam AChessActor::GetTeam() const
 {
 	return ChessTeamType;
 }

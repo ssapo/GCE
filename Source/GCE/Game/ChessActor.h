@@ -34,7 +34,7 @@ public:
 		FORCEINLINE	bool GetVisiblity() const;
 
 	UFUNCTION(BlueprintPure)
-		FORCEINLINE	EChessTeam GetChessTeam() const;
+		FORCEINLINE	EChessTeam GetTeam() const;
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "ChessPiece")

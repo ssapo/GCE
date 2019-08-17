@@ -4,7 +4,8 @@
 #include "ChessGameState.h"
 #include "ChessPlayerState.h"
 #include "ChessFuncs.h"
-#include "ChessMoverComponent.h"
+#include "Mover/ChessMoverComponent.h"
+#include "Death/ChessDeathComponent.h"
 
 void AChessGameMode::ProcessPiecesAreSameTeam(AChessActor* const ChessActor)
 {
@@ -16,8 +17,8 @@ void AChessGameMode::ProcessPiecesAreSameTeam(AChessActor* const ChessActor)
 	}
 	else
 	{
-		const EChessTeam& PrevChessActorTeam = ClickedCurrentActor->GetChessTeam();
-		const EChessTeam& NewChessActorTeam = ChessActor->GetChessTeam();
+		const EChessTeam& PrevChessActorTeam = ClickedCurrentActor->GetTeam();
+		const EChessTeam& NewChessActorTeam = ChessActor->GetTeam();
 
 		bool IsSameTeam = UChessFuncs::IsEqualTeam(NewChessActorTeam, PrevChessActorTeam);
 		if (IsSameTeam)
@@ -43,8 +44,8 @@ void AChessGameMode::ProcessPiecesAreOtherTeam(AChessActor* const ChessActor)
 	}
 	else
 	{
-		const EChessTeam& PrevChessActorTeam = ClickedCurrentActor->GetChessTeam();
-		const EChessTeam& NewChessActorTeam = ChessActor->GetChessTeam();
+		const EChessTeam& PrevChessActorTeam = ClickedCurrentActor->GetTeam();
+		const EChessTeam& NewChessActorTeam = ChessActor->GetTeam();
 
 		bool IsSameTeam = UChessFuncs::IsEqualTeam(NewChessActorTeam, PrevChessActorTeam);
 		if (IsSameTeam)
@@ -70,7 +71,7 @@ void AChessGameMode::ProcessClickedMovePiece(AChessActor* const ChessActor)
 	}
 
 	const EChessTeam& PlayerTeam = ChessPlayerPtr->GetChoosenChessTeam();
-	const EChessTeam& CurrentClickedActorTeam = CurrentIsNotNull->GetChessTeam();
+	const EChessTeam& CurrentClickedActorTeam = CurrentIsNotNull->GetTeam();
 
 	if (UChessFuncs::IsEqualTeam(PlayerTeam, CurrentClickedActorTeam))
 	{
@@ -143,15 +144,31 @@ void AChessGameMode::MovePieceCurrentIsSameTeam(AChessActor* const ChessActor)
 	GCE_CHECK(nullptr != Mover);
 
 	FIntPoint NewPoint = Mover->GetCell();
-	if (AChessActor * const AttackedPiece = GetChessPieceFromMap(NewPoint))
+	if (auto AttackedPiece = GetChessPieceFromMap(NewPoint))
 	{
-		if (AttackedPiece->Destroy())
+		auto Name = *AttackedPiece->GetName();
+
+		// Process "eat chess piece"
+		if (auto Death = AttackedPiece->FindComponentByClass<UChessDeathComponent>())
 		{
-			GCE_LOG(Log, TEXT("Successs Destroy Actor [%s]"), *AttackedPiece->GetName());
+			Death->WillDieItSelf();
+			
+			if (UChessFuncs::IsBlackKing(ChessActor->GetTeam(), Death->GetClass()))
+			{
+				GCE_LOG(Log, TEXT("White is Win check the [%s]"), Name);
+
+				//GameOver();
+			}
+			else if (UChessFuncs::IsWhiteKing(ChessActor->GetTeam(), Death->GetClass()))
+			{
+				GCE_LOG(Log, TEXT("Black is Win check the [%s]"), Name);
+				
+				//GameOver();
+			}
 		}
 		else
 		{
-			GCE_LOG(Log, TEXT("Failed Destroy Actor [%s]"), *AttackedPiece->GetName());
+			GCE_LOG(Log, TEXT("Find Component Death from [%s]"), Name);
 		}
 	}
 

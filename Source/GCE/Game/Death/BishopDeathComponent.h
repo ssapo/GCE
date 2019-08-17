@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Game/Mover/ChessMoverComponent.h"
-#include "QueenMoverComponent.generated.h"
+#include "Game/Death/ChessDeathComponent.h"
+#include "BishopDeathComponent.generated.h"
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class GCE_API UQueenMoverComponent : public UChessMoverComponent
+class GCE_API UBishopDeathComponent : public UChessDeathComponent
 {
 	GENERATED_BODY()
 	
 public:
-	UQueenMoverComponent();
+	UBishopDeathComponent();
 };

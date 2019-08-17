@@ -5,7 +5,7 @@
 #include <Button.h>
 #include <WidgetSwitcher.h>
 #include "GCE.h"
-#include "ChessGameModeBase.h"
+#include "Game/ChessGameModeBase.h"
 
 void UChessFullScreenWidget::NativeConstruct()
 {
@@ -55,7 +55,7 @@ void UChessFullScreenWidget::NativeDestruct()
 
 void UChessFullScreenWidget::OnSwitchClickedImpl()
 {
-	GetGameMode()->ChangeTeam();
+	GetGameMode()->ChangeTeam(false);
 }
 
 void UChessFullScreenWidget::OnChange2DClickedImpl()

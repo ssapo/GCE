@@ -26,4 +26,16 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Chess|Misc")
 		static EChessTeam GetOpponentTeam(const EChessTeam& Team);
+
+	UFUNCTION(BlueprintPure, Category = "Chess|Misc")
+		static bool IsEqualClass(const EChessClass& C1, const EChessClass& C2);
+
+	UFUNCTION(BlueprintPure, Category = "Chess|Misc")
+		static bool IsKing(const EChessClass& Class);
+
+	UFUNCTION(BlueprintPure, Category = "Chess|Misc")
+		static bool IsBlackKing(const EChessTeam& Team, const EChessClass& Class);
+
+	UFUNCTION(BlueprintPure, Category = "Chess|Misc")
+		static bool IsWhiteKing(const EChessTeam& Team, const EChessClass& Class);
 };

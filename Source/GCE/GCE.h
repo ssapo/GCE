@@ -38,11 +38,22 @@ enum class EChessActor : uint8
 	Black_Queen		UMETA(DisplayName = "Black Queen"),
 };
 
-
 UENUM(BlueprintType)
 enum class EChessTeam : uint8
 {
 	NONE			UMETA(DisplayName = "NONE"),
 	White			UMETA(DisplayName = "White"),
 	Black			UMETA(DisplayName = "Black"),
+};
+
+UENUM(BlueprintType)
+enum class EChessClass : uint8
+{
+	NONE			UMETA(DisplayName = "NONE"),
+	King			UMETA(DisplayName = "King"),
+	Queen			UMETA(DisplayName = "Queen"),
+	Bishop			UMETA(DisplayName = "Bishop"),
+	Knight			UMETA(DisplayName = "Knight"),
+	Rook			UMETA(DisplayName = "Rook"),
+	Pawn			UMETA(DisplayName = "Pawn"),
 };

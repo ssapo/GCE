@@ -2,7 +2,7 @@
 
 
 #include "ChessUserWidget.h"
-#include "ChessGameModeBase.h"
+#include "Game/ChessGameModeBase.h"
 
 void UChessUserWidget::NativeConstruct()
 {

@@ -7,7 +7,7 @@
 #include "ChessGameState.h"
 #include "ChessPlayerState.h"
 #include "ChessFuncs.h"
-#include "ChessMoverComponent.h"
+#include "Mover/ChessMoverComponent.h"
 #include "ChessCameraPawn.h"
 #include "Mover/PawnMoverComponent.h"
 
@@ -51,6 +51,7 @@ void AChessGameMode::StartPlay()
 
 	// 체스 이동 타일
 	ChessMoveMap.Reset();
+	MoverWaitAnimPool.Reset();
 	if (nullptr == MovePieceClass)
 	{
 		GCE_LOG(Error, TEXT("nullptr == MovePieceClass"));
@@ -76,6 +77,7 @@ void AChessGameMode::StartPlay()
 
 				Mover->SetIntervalVector(StartIntervalLocation);
 				Mover->SetCell(X, Y, true);
+				MoverWaitAnimPool.Add(Mover, true);
 				Mover->OnMovingEnd.AddUObject(this, &AChessGameMode::OnMovingEndChessActor);
 
 				ChessMoveMap.Add(Actor);
@@ -113,6 +115,7 @@ void AChessGameMode::StartPlay()
 				Mover->SetCell(X, Y, true);
 				Mover->OnMovingEnd.AddUObject(this, &AChessGameMode::OnMovingEndChessActor);
 				
+				MoverWaitAnimPool.Add(Mover);
 				ChessGameMap.Add(Actor);
 			}
 			else
@@ -130,11 +133,12 @@ void AChessGameMode::StartPlay()
 	GCE_CHECK(nullptr != ChessCamera);
 	ChessCameraPtr = ChessCamera;
 
-	SettingTeam(EChessTeam::White);
-	bWaitAnimation = false;
+	SettingTeam(EChessTeam::White, true);
+
+	bWaitAnimation = true;
 }
 
-void AChessGameMode::SettingTeam(const EChessTeam& Team)
+void AChessGameMode::SettingTeam(const EChessTeam& Team, bool bFirst)
 {
 	if (ChessCameraPtr.IsValid() && ChessPlayerPtr.IsValid())
 	{
@@ -142,29 +146,37 @@ void AChessGameMode::SettingTeam(const EChessTeam& Team)
 
 		if (UChessFuncs::IsWhiteTeam(Team))
 		{
-			ChessPlayerPtr->SetMyTurn(true);
+			if (bFirst)
+			{
+				ChessPlayerPtr->SetMyTurn(true);
+			}
+
 			ChessCameraPtr->SetCameraTransform(WhiteCameraTransform);
 		}
 		else if (UChessFuncs::IsBlackTeam(Team))
 		{
-			ChessPlayerPtr->SetMyTurn(false);
+			if (bFirst)
+			{
+				ChessPlayerPtr->SetMyTurn(true);
+			}
+
 			ChessCameraPtr->SetCameraTransform(BlackCameraTransform);
 		}
 	}
 }
 
-void AChessGameMode::ChangeTeam()
+void AChessGameMode::ChangeTeam(bool bFirst)
 {
 	if (ChessCameraPtr.IsValid() && ChessPlayerPtr.IsValid())
 	{
 		auto Team = ChessPlayerPtr->GetChoosenChessTeam();
 		if (UChessFuncs::IsWhiteTeam(Team))
 		{
-			SettingTeam(EChessTeam::Black);
+			SettingTeam(EChessTeam::Black, bFirst);
 		}
 		else if (UChessFuncs::IsBlackTeam(Team))
 		{
-			SettingTeam(EChessTeam::White);
+			SettingTeam(EChessTeam::White, bFirst);
 		}
 	}
 }
@@ -230,14 +242,37 @@ void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
 
 void AChessGameMode::OnMovingEndChessActor(UChessMoverComponent* const Mover)
 {
-	bWaitAnimation = false;
+	if (auto FoundNotNull = MoverWaitAnimPool.Find(Mover))
+	{
+		*FoundNotNull = false;
+	}
 
+	bool ThereIsAtLeastOne = false;
+	TArray<bool> Values;
+	MoverWaitAnimPool.GenerateValueArray(Values);
+
+	for (bool E : Values)
+	{
+		if (E)
+		{
+			ThereIsAtLeastOne = true;
+		}
+	}
+
+	if (ThereIsAtLeastOne)
+	{
+		GCE_LOG(Warning, TEXT("AChessGameMode::OnMovingEndChessActor ThereIsAtLeastOne"));
+		return;
+	}
+
+	bWaitAnimation = false;
+	ChangeTeam(true);
 }
 
 void AChessGameMode::ProcessClickedChessPiece(AChessActor* const ChessActor)
 {
 	const EChessTeam& PlayerTeam = ChessPlayerPtr->GetChoosenChessTeam();
-	const EChessTeam& SelectedActorTeam = ChessActor->GetChessTeam();
+	const EChessTeam& SelectedActorTeam = ChessActor->GetTeam();
 
 	if (UChessFuncs::IsEqualTeam(PlayerTeam, SelectedActorTeam))
 	{
@@ -323,7 +358,7 @@ void AChessGameMode::SetVisibleMovableCells(AChessActor* const ChessActor)
 
 	FIntPoint CurrPosition = ChessActorMover->GetCell();
 	TArray<FIntPoint> Directions = ChessActorMover->GetMoveDirections();
-	EChessTeam TeamOfActor = ChessActor->GetChessTeam();
+	EChessTeam TeamOfActor = ChessActor->GetTeam();
 	bool bPersistance = ChessActorMover->IsPercistance();
 
 	for (FIntPoint E : Directions)
@@ -384,7 +419,7 @@ void AChessGameMode::SetVisibleMovableCells(AChessActor* const ChessActor)
 
 	CurrPosition = ChessActorMover->GetCell();
 	Directions = ChessActorMover->GetAttackDirections();
-	TeamOfActor = ChessActor->GetChessTeam();
+	TeamOfActor = ChessActor->GetTeam();
 	bPersistance = ChessActorMover->IsPercistance();
 
 	for (FIntPoint E : Directions)
@@ -404,7 +439,7 @@ void AChessGameMode::SetVisibleMovableCells(AChessActor* const ChessActor)
 				if (auto ChessPiece = GetChessPieceFromMap(NextPosition))
 				{
 					bLocalPersistance = false;
-					if (!UChessFuncs::IsEqualTeam(TeamOfActor, ChessPiece->GetChessTeam()))
+					if (!UChessFuncs::IsEqualTeam(TeamOfActor, ChessPiece->GetTeam()))
 					{
 						MoverPieceActor->SetVisiblity(true);
 					}

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Game/ChessMoverComponent.h"
+#include "Game/Mover/ChessMoverComponent.h"
 #include "PawnMoverComponent.generated.h"
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))

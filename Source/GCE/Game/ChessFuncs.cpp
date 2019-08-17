@@ -37,3 +37,23 @@ EChessTeam UChessFuncs::GetOpponentTeam(const EChessTeam& Team)
 
 	return EChessTeam::NONE;
 }
+
+bool UChessFuncs::IsEqualClass(const EChessClass& C1, const EChessClass& C2)
+{
+	return C1 == C2;
+}
+
+bool UChessFuncs::IsKing(const EChessClass& Class)
+{
+	return IsEqualClass(EChessClass::King, Class);
+}
+
+bool UChessFuncs::IsBlackKing(const EChessTeam& Team, const EChessClass& Class)
+{
+	return IsBlackTeam(Team) && IsKing(Class);
+}
+
+bool UChessFuncs::IsWhiteKing(const EChessTeam& Team, const EChessClass& Class)
+{
+	return IsBlackTeam(Team) && IsKing(Class);
+}
