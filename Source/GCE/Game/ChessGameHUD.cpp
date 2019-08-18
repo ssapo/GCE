@@ -5,21 +5,49 @@
 #include "Widgets/ChessUserWidget.h"
 #include "GCE.h"
 
-void AChessGameHUD::DrawHUD()
+AChessGameHUD::AChessGameHUD()
 {
-	Super::DrawHUD();
-
+	CurrentWidget = nullptr;
 }
 
-void AChessGameHUD::PostInitializeComponents()
+void AChessGameHUD::StartPlayHUD()
 {
-	Super::PostInitializeComponents();
+	HandlingWidgetImpl(InGameWidget);
+}
 
-	auto World = GetWorld();
-	GCE_CHECK(nullptr != World);
+void AChessGameHUD::GameOverHUD()
+{
+	HandlingWidgetImpl(GameOverWidget);
+}
 
-	auto Widget = CreateWidget<UChessUserWidget>(World, InGameWidget);
-	GCE_CHECK(nullptr != Widget);
+void AChessGameHUD::HandlingWidgetImpl(const TSubclassOf<UChessUserWidget>& Widget)
+{
+	if (CurrentWidget.IsValid())
+	{
+		CurrentWidget->RemoveFromParent();
+		CurrentWidget = nullptr;
+	}
 
-	Widget->AddToViewport();
+	auto NewWidget = GetInactivatedWidget(Widget);
+	if (!NewWidget)
+	{
+		NewWidget = CreateWidget<UChessUserWidget>(GetWorld(), Widget);
+		GCE_CHECK(nullptr != NewWidget);
+	}
+
+	NewWidget->AddToViewport();
+	CurrentWidget = NewWidget;
+}
+
+UChessUserWidget* AChessGameHUD::GetInactivatedWidget(const TSubclassOf<UChessUserWidget>& Key) const
+{
+	if (auto Found = WidgetPool.Find(Key))
+	{
+		if (false == (*Found)->IsActivating())
+		{
+			return *Found;
+		}
+	}
+
+	return nullptr;
 }

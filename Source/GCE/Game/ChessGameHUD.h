@@ -7,18 +7,31 @@
 #include "GameFramework/HUD.h"
 #include "ChessGameHUD.generated.h"
 
+class UChessUserWidget;
+
 UCLASS()
 class GCE_API AChessGameHUD : public AHUD
 {
 	GENERATED_BODY()
 	
 public:
-	virtual void DrawHUD() override;
+	AChessGameHUD();
 
+	void StartPlayHUD();
+	void GameOverHUD();
 
-	virtual void PostInitializeComponents() override;
+private:
+	void HandlingWidgetImpl(const TSubclassOf<UChessUserWidget>& Widget);
+	UChessUserWidget* GetInactivatedWidget(const TSubclassOf<UChessUserWidget>& Key) const;
 
-public:
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UChessUserWidget> InGameWidget;
+private:
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess))
+		TSubclassOf<UChessUserWidget> InGameWidget;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess))
+		TSubclassOf<UChessUserWidget> GameOverWidget;
+
+	TMap<TSubclassOf<UChessUserWidget>, UChessUserWidget*> WidgetPool;
+
+	TWeakObjectPtr<UChessUserWidget> CurrentWidget;
 };

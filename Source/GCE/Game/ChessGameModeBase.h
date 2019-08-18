@@ -12,19 +12,26 @@ class GCE_API AChessGameMode : public AGameMode
 {
 	GENERATED_BODY()
 
-public: 
+public:
 	AChessGameMode();
 
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 
 	virtual void StartPlay() override;
+	void GameOver();
 
 public:
+
+	// InGameWidget
 	void ChangeTeam(bool bSettingTurn);
 	void Change2DCamera();
 	void Change3DCamera();
 	void LockCameraMoving();
 	void UnlockCameraMoving();
+
+	// GameOverWidget
+	void RestartGame();
+	void GoLobby();
 
 private:
 	void SettingTeam(const EChessTeam& Team, bool bSettingTurn);
@@ -32,7 +39,7 @@ private:
 	class AChessActor* GetMoverPieceFromMap(const FIntPoint& Point) const;
 	class AChessActor* GetChessPieceFromMap(const FIntPoint& Point) const;
 	void SetChessPieceIntoMap(class AChessActor* Actor, const FIntPoint& Point);
-	
+
 	void SetVisibleMovableCells(class AChessActor* const ChessActor);
 	void SetInvisibleAllCells();
 
@@ -61,13 +68,13 @@ private:
 
 	//Case 6: OtherTeam , Current is OhterTeam
 	void OtherTeamCurrentIsOtherTeam(class AChessActor* const ChessActor);
-	
+
 	//Case 7: MovePiece , Current is SameTeam
 	void MovePieceCurrentIsSameTeam(class AChessActor* const ChessActor);
-	
+
 	//Case 8: MovePiece , Current is OtherTeam
 	void MovePieceCurrentIsOtherTeam(class AChessActor* const ChessActor);
-	
+
 private:
 	static constexpr int32 CHESS_WIDTH = 8;
 	static constexpr int32 CHESS_HEIGHT = 8;
@@ -112,5 +119,9 @@ private:
 
 	TWeakObjectPtr<class AChessPlayerController> ChessPlayerPtr;
 
+	TWeakObjectPtr<class AChessGameHUD> ChessGameHUD;
+
 	bool bWaitAnimation;
+
+	bool bGameOver;
 };

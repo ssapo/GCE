@@ -16,30 +16,6 @@ AChessPlayerController::AChessPlayerController()
 	bEnableTouchOverEvents = true;
 }
 
-void AChessPlayerController::ReceivedPlayer()
-{
-	Super::ReceivedPlayer();
-	GCE_LOG_S(Log);
-}
-
-void AChessPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-	GCE_LOG_S(Log);
-}
-
-void AChessPlayerController::RestartLevel()
-{
-	Super::RestartLevel();
-	GCE_LOG_S(Log);
-}
-
-void AChessPlayerController::BeginPlay()
-{
-	Super::BeginPlay();
-	GCE_LOG_S(Log);
-}
-
 void AChessPlayerController::ChangeCurrentClickedActor(AChessActor* ClickedActor)
 {
 	if (CurrentClickedActor.IsValid())

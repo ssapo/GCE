@@ -6,9 +6,6 @@
 #include "Game/Widgets/ChessUserWidget.h"
 #include "ChessFullScreenWidget.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class GCE_API UChessFullScreenWidget : public UChessUserWidget
 {
@@ -34,7 +31,6 @@ public:
 		void OnUnlockCameraMovingClickedImpl();
 
 private:
-
 	UPROPERTY(Meta = (BindWidget))
 		class UButton* SwitchButton;
 

@@ -153,17 +153,17 @@ void AChessGameMode::MovePieceCurrentIsSameTeam(AChessActor* const ChessActor)
 		{
 			Death->WillDieItSelf();
 			
-			if (UChessFuncs::IsBlackKing(ChessActor->GetTeam(), Death->GetClass()))
+			if (UChessFuncs::IsBlackKing(AttackedPiece->GetTeam(), Death->GetClass()))
 			{
-				GCE_LOG(Log, TEXT("White is Win check the [%s]"), Name);
+				GCE_LOG(Log, TEXT("White is Win"));
 
-				//GameOver();
+				GameOver();
 			}
-			else if (UChessFuncs::IsWhiteKing(ChessActor->GetTeam(), Death->GetClass()))
+			else if (UChessFuncs::IsWhiteKing(AttackedPiece->GetTeam(), Death->GetClass()))
 			{
-				GCE_LOG(Log, TEXT("Black is Win check the [%s]"), Name);
+				GCE_LOG(Log, TEXT("Black is Win"));
 				
-				//GameOver();
+				GameOver();
 			}
 		}
 		else

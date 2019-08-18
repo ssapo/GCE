@@ -55,5 +55,5 @@ bool UChessFuncs::IsBlackKing(const EChessTeam& Team, const EChessClass& Class)
 
 bool UChessFuncs::IsWhiteKing(const EChessTeam& Team, const EChessClass& Class)
 {
-	return IsBlackTeam(Team) && IsKing(Class);
+	return IsWhiteTeam(Team) && IsKing(Class);
 }

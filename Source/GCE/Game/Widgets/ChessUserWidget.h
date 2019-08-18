@@ -13,13 +13,19 @@ class GCE_API UChessUserWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
-	
+
+	UFUNCTION(BlueprintPure)
+		bool IsActivating() const;
+
 protected:
-	class AChessGameMode* GetGameMode() const;
+	UFUNCTION(BlueprintPure)
+		class AChessGameMode* GetGameMode() const;
 
 private:
 	void SetGameMode();
 
 private:
 	class AChessGameMode* GameMode;
+
+	bool bActivated;
 };

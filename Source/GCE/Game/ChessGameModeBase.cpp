@@ -10,6 +10,7 @@
 #include "Mover/ChessMoverComponent.h"
 #include "ChessCameraPawn.h"
 #include "Mover/PawnMoverComponent.h"
+#include "ChessGameHUD.h"
 
 AChessGameMode::AChessGameMode()
 {
@@ -49,7 +50,7 @@ void AChessGameMode::StartPlay()
 	auto BoardClass = GetWorld()->SpawnActor<AChessActor>(ChessBoardClass);
 	GCE_CHECK(nullptr != BoardClass);
 
-	// √ºΩ∫ ¿Ãµø ≈∏¿œ
+	// Ï≤¥Ïä§ Ïù¥Îèô ÌÉÄÏùº
 	ChessMoveMap.Reset();
 	MoverWaitAnimPool.Reset();
 	if (nullptr == MovePieceClass)
@@ -85,7 +86,7 @@ void AChessGameMode::StartPlay()
 		}
 	}
 
-	// √ºΩ∫ ∏ 
+	// Ï≤¥Ïä§ Îßµ
 	ChessGameMap.Reset();
 	for (int32 Y = 0; Y < CHESS_HEIGHT; ++Y)
 	{
@@ -129,6 +130,14 @@ void AChessGameMode::StartPlay()
 	GCE_CHECK(nullptr != PC);
 	ChessPlayerPtr = PC;
 
+	auto HUD = ChessPlayerPtr->GetHUD();
+	GCE_CHECK(nullptr != HUD);
+
+	auto ChessHUD = Cast<AChessGameHUD>(HUD);
+	GCE_CHECK(nullptr != ChessHUD);
+	ChessGameHUD = ChessHUD;
+	ChessGameHUD->StartPlayHUD();
+
 	auto ChessCamera = Cast<AChessCameraPawn>(ChessPlayerPtr->GetPawn());
 	GCE_CHECK(nullptr != ChessCamera);
 	ChessCameraPtr = ChessCamera;
@@ -136,6 +145,30 @@ void AChessGameMode::StartPlay()
 	SettingTeam(EChessTeam::White, true);
 
 	bWaitAnimation = true;
+	bGameOver = false;
+}
+
+void AChessGameMode::GameOver()
+{
+	if (ChessGameHUD.IsValid())
+	{
+		ChessGameHUD->GameOverHUD();
+	}
+
+	bGameOver = true;
+}
+
+void AChessGameMode::RestartGame()
+{
+	if (ChessPlayerPtr.IsValid())
+	{
+		ChessPlayerPtr->RestartLevel();
+	}
+}
+
+void AChessGameMode::GoLobby()
+{
+	GCE_LOG(Log, TEXT("GoLobby()"));
 }
 
 void AChessGameMode::SettingTeam(const EChessTeam& Team, bool bFirst)
@@ -215,14 +248,14 @@ void AChessGameMode::UnlockCameraMoving()
 
 void AChessGameMode::OnSelectedChessActor(AChessActor* const ChessActor)
 {
-	if (bWaitAnimation)
+	if (bGameOver && bWaitAnimation)
 	{
-		GCE_LOG(Log, TEXT("bWaitAnimation is true so return logic"));
+		GCE_LOG(Log, TEXT("Entered logic return to ingore"));
 
 		return;
 	}
 
-	if (nullptr == ChessActor )
+	if (nullptr == ChessActor)
 	{
 		return;
 	}

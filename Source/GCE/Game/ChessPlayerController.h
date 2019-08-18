@@ -18,11 +18,6 @@ class GCE_API AChessPlayerController : public APlayerController
 public:
 	AChessPlayerController();
 
-	virtual void ReceivedPlayer() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	virtual void RestartLevel() override;
-	virtual void BeginPlay() override;
-
 public:
 	UFUNCTION(BlueprintCallable)
 		void ChangeCurrentClickedActor(class AChessActor* ClickedActor);
