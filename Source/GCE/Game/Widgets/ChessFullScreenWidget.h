@@ -30,6 +30,7 @@ public:
 	UFUNCTION()
 		void OnUnlockCameraMovingClickedImpl();
 
+
 private:
 	UPROPERTY(Meta = (BindWidget))
 		class UButton* SwitchButton;
@@ -51,4 +52,6 @@ private:
 
 	UPROPERTY(Meta = (BindWidget))
 		class UButton* UnlockCameraMovingButton;
+
+	class AChessGameMode* GameMode;
 };

@@ -2,47 +2,26 @@
 
 
 #include "ChessLobbyMode.h"
-#include "Game/Widgets/ChessUserWidget.h"
-#include "GCE.h"
+#include "ChessLobbyHUD.h"
 
 AChessLobbyMode::AChessLobbyMode()
 {
 
 }
 
-void AChessLobbyMode::StartPlayHUD()
+void AChessLobbyMode::StartPlay()
 {
-	HandlingWidgetImpl(LobbyWidget);
-}
+	Super::StartPlay();
 
-void AChessLobbyMode::HandlingWidgetImpl(const TSubclassOf<UChessUserWidget>& Widget)
-{
-	if (CurrentWidget.IsValid())
-	{
-		CurrentWidget->RemoveFromParent();
-		CurrentWidget = nullptr;
-	}
+	auto PC = GetWorld()->GetFirstPlayerController();
+	GCE_CHECK(nullptr != PC);
+	LobbyPlayerPtr = PC;
 
-	auto NewWidget = GetInactivatedWidget(Widget);
-	if (!NewWidget)
-	{
-		NewWidget = CreateWidget<UChessUserWidget>(GetWorld(), Widget);
-		GCE_CHECK(nullptr != NewWidget);
-	}
-
-	NewWidget->AddToViewport();
-	CurrentWidget = NewWidget;
-}
-
-UChessUserWidget* AChessLobbyMode::GetInactivatedWidget(const TSubclassOf<UChessUserWidget>& Key) const
-{
-	if (auto Found = WidgetPool.Find(Key))
-	{
-		if (false == (*Found)->IsActivating())
-		{
-			return *Found;
-		}
-	}
-
-	return nullptr;
+	auto HUD = LobbyPlayerPtr->GetHUD();
+	GCE_CHECK(nullptr != HUD);
+	
+	auto LobbyHUD = Cast<AChessLobbyHUD>(HUD);
+	GCE_CHECK(nullptr != LobbyHUD);
+	LobbyHUDPtr = LobbyHUD;
+	LobbyHUDPtr->StartPlayHUD();
 }

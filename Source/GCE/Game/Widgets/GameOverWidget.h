@@ -28,4 +28,6 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 		class UButton* LobbyButton;
+
+	class AChessGameMode* GameMode;
 };

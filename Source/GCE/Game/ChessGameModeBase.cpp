@@ -158,11 +158,6 @@ void AChessGameMode::GameOver()
 	bGameOver = true;
 }
 
-void AChessGameMode::RestartGame()
-{
-	UGameplayStatics::OpenLevel(GetWorld(), TEXT("ChessMap.Map"), false);
-}
-
 void AChessGameMode::GoLobby()
 {
 	UGameplayStatics::OpenLevel(GetWorld(), TEXT("Lobby.Map"), false);

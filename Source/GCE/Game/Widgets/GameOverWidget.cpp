@@ -8,6 +8,11 @@ void UGameOverWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	auto FoundGameMode = GetWorld()->GetAuthGameMode<AChessGameMode>();
+	GCE_CHECK(nullptr != FoundGameMode);
+
+	GameMode = FoundGameMode;
+
 	if (RestartButton)
 	{
 		RestartButton->OnClicked.AddDynamic(this,
@@ -28,10 +33,10 @@ void UGameOverWidget::NativeDestruct()
 
 void UGameOverWidget::OnRestartClickedImpl()
 {
-	GetGameMode()->RestartGame();
+	GameMode->RestartGame();
 }
 
 void UGameOverWidget::OnLobbyClickedImpl()
 {
-	GetGameMode()->GoLobby();
+	GameMode->GoLobby();
 }

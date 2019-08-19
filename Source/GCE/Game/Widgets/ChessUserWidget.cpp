@@ -8,8 +8,6 @@ void UChessUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	SetGameMode();
-
 	bActivated = true;
 }
 
@@ -23,17 +21,4 @@ void UChessUserWidget::NativeDestruct()
 bool UChessUserWidget::IsActivating() const
 {
 	return bActivated;
-}
-
-void UChessUserWidget::SetGameMode()
-{
-	auto FoundGameMode = GetWorld()->GetAuthGameMode<AChessGameMode>();
-	GCE_CHECK(nullptr != FoundGameMode);
-
-	GameMode = FoundGameMode;
-}
-
-AChessGameMode* UChessUserWidget::GetGameMode() const
-{
-	return GameMode;
 }

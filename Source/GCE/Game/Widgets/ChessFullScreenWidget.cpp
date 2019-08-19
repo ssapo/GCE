@@ -11,6 +11,11 @@ void UChessFullScreenWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	auto FoundGameMode = GetWorld()->GetAuthGameMode<AChessGameMode>();
+	GCE_CHECK(nullptr != FoundGameMode);
+
+	GameMode = FoundGameMode;
+
 	if (SwitchButton)
 	{
 		SwitchButton->OnClicked.AddDynamic(this,
@@ -51,29 +56,49 @@ void UChessFullScreenWidget::NativeDestruct()
 	{
 		SwitchButton->OnClicked.RemoveAll(this);
 	}
+
+	if (Change2DButton)
+	{
+		Change2DButton->OnClicked.RemoveAll(this);
+	}
+
+	if (Change3DButton)
+	{
+		Change3DButton->OnClicked.RemoveAll(this);
+	}
+
+	if (LockCameraMovingButton)
+	{
+		LockCameraMovingButton->OnClicked.RemoveAll(this);
+	}
+
+	if (UnlockCameraMovingButton)
+	{
+		UnlockCameraMovingButton->OnClicked.RemoveAll(this);
+	}
 }
 
 void UChessFullScreenWidget::OnSwitchClickedImpl()
 {
-	GetGameMode()->ChangeTeam(false);
+	GameMode->ChangeTeam(false);
 }
 
 void UChessFullScreenWidget::OnChange2DClickedImpl()
 {
-	GetGameMode()->Change2DCamera();
+	GameMode->Change2DCamera();
 }
 
 void UChessFullScreenWidget::OnChange3DClickedImpl()
 {
-	GetGameMode()->Change3DCamera();
+	GameMode->Change3DCamera();
 }
 
 void UChessFullScreenWidget::OnLockCameraMovingClickedImpl()
 {
-	GetGameMode()->LockCameraMoving();
+	GameMode->LockCameraMoving();
 }
 
 void UChessFullScreenWidget::OnUnlockCameraMovingClickedImpl()
 {
-	GetGameMode()->UnlockCameraMoving();
+	GameMode->UnlockCameraMoving();
 }

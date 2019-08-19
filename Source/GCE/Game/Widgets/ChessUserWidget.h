@@ -17,15 +17,6 @@ public:
 	UFUNCTION(BlueprintPure)
 		bool IsActivating() const;
 
-protected:
-	UFUNCTION(BlueprintPure)
-		class AChessGameMode* GetGameMode() const;
-
 private:
-	void SetGameMode();
-
-private:
-	class AChessGameMode* GameMode;
-
 	bool bActivated;
 };
