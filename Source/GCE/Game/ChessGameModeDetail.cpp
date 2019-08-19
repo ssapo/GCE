@@ -137,10 +137,7 @@ void AChessGameMode::OtherTeamCurrentIsOtherTeam(AChessActor* const ChessActor)
 
 void AChessGameMode::MovePieceCurrentIsSameTeam(AChessActor* const ChessActor)
 {
-	auto Component = ChessActor->GetComponentByClass(UChessMoverComponent::StaticClass());
-	GCE_CHECK(nullptr != Component);
-
-	auto Mover = Cast<UChessMoverComponent>(Component);
+	auto Mover = ChessActor->FindComponentByClass<UChessMoverComponent>();
 	GCE_CHECK(nullptr != Mover);
 
 	FIntPoint NewPoint = Mover->GetCell();
@@ -175,11 +172,8 @@ void AChessGameMode::MovePieceCurrentIsSameTeam(AChessActor* const ChessActor)
 	auto CurrActor = ChessPlayerPtr->GetCurrentClickedActor();
 	GCE_CHECK(nullptr != CurrActor);
 
-	auto CurrActorComponent = CurrActor->GetComponentByClass(UChessMoverComponent::StaticClass());
-	GCE_CHECK(nullptr != Component);
-
-	auto CurrActorMover = Cast<UChessMoverComponent>(CurrActorComponent);
-	GCE_CHECK(nullptr != Mover);
+	auto CurrActorMover = CurrActor->FindComponentByClass<UChessMoverComponent>();
+	GCE_CHECK(nullptr != CurrActorMover);
 
 	SetChessPieceIntoMap(CurrActor, NewPoint);
 

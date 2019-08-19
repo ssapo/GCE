@@ -10,7 +10,7 @@
 #include "Mover/ChessMoverComponent.h"
 #include "ChessCameraPawn.h"
 #include "Mover/PawnMoverComponent.h"
-#include "ChessGameHUD.h"
+#include "InGame/ChessGameHUD.h"
 
 AChessGameMode::AChessGameMode()
 {
@@ -160,15 +160,12 @@ void AChessGameMode::GameOver()
 
 void AChessGameMode::RestartGame()
 {
-	if (ChessPlayerPtr.IsValid())
-	{
-		ChessPlayerPtr->RestartLevel();
-	}
+	UGameplayStatics::OpenLevel(GetWorld(), TEXT("ChessMap.Map"), false);
 }
 
 void AChessGameMode::GoLobby()
 {
-	GCE_LOG(Log, TEXT("GoLobby()"));
+	UGameplayStatics::OpenLevel(GetWorld(), TEXT("Lobby.Map"), false);
 }
 
 void AChessGameMode::SettingTeam(const EChessTeam& Team, bool bFirst)
@@ -280,22 +277,16 @@ void AChessGameMode::OnMovingEndChessActor(UChessMoverComponent* const Mover)
 		*FoundNotNull = false;
 	}
 
-	bool ThereIsAtLeastOne = false;
 	TArray<bool> Values;
 	MoverWaitAnimPool.GenerateValueArray(Values);
+	GCE_CHECK(Values.Num() > 0);
 
 	for (bool E : Values)
 	{
 		if (E)
 		{
-			ThereIsAtLeastOne = true;
+			return;
 		}
-	}
-
-	if (ThereIsAtLeastOne)
-	{
-		GCE_LOG(Warning, TEXT("AChessGameMode::OnMovingEndChessActor ThereIsAtLeastOne"));
-		return;
 	}
 
 	bWaitAnimation = false;
@@ -349,10 +340,7 @@ void AChessGameMode::SetChessPieceIntoMap(AChessActor* Actor, const FIntPoint& N
 {
 	GCE_CHECK(Actor);
 
-	auto Component = Actor->GetComponentByClass(UChessMoverComponent::StaticClass());
-	GCE_CHECK(Component);
-
-	auto Mover = Cast<UChessMoverComponent>(Component);
+	auto Mover = Actor->FindComponentByClass<UChessMoverComponent>();
 	GCE_CHECK(Mover);
 
 	if (0 <= NewPoint.X && CHESS_WIDTH > NewPoint.X && 0 <= NewPoint.Y && CHESS_HEIGHT > NewPoint.Y)
@@ -383,10 +371,7 @@ void AChessGameMode::SetVisibleMovableCells(AChessActor* const ChessActor)
 {
 	GCE_CHECK(nullptr != ChessActor);
 
-	auto Component = ChessActor->GetComponentByClass(UChessMoverComponent::StaticClass());
-	GCE_CHECK(nullptr != Component);
-
-	auto ChessActorMover = Cast<UChessMoverComponent>(Component);
+	auto ChessActorMover = ChessActor->FindComponentByClass<UChessMoverComponent>();
 	GCE_CHECK(nullptr != ChessActorMover);
 
 	FIntPoint CurrPosition = ChessActorMover->GetCell();

@@ -18,7 +18,9 @@ public:
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 
 	virtual void StartPlay() override;
-	void GameOver();
+	
+	UFUNCTION(Exec)
+		void GameOver();
 
 public:
 
@@ -79,18 +81,7 @@ private:
 	static constexpr int32 CHESS_WIDTH = 8;
 	static constexpr int32 CHESS_HEIGHT = 8;
 
-	UPROPERTY()
-		TArray<int32> ChessStartMap;
-
-	UPROPERTY()
-		TArray<TWeakObjectPtr<class AChessActor>> ChessGameMap;
-
-	UPROPERTY()
-		TArray<TWeakObjectPtr<class AChessActor>> ChessMoveMap;
-
-	UPROPERTY()
-		TMap<class UChessMoverComponent*, bool> MoverWaitAnimPool;
-
+private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Map", Meta = (AllowPrivateAccess = true))
 		UClass* MovePieceClass;
 
@@ -115,13 +106,16 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Chess|Camera", Meta = (AllowPrivateAccess = true))
 		FTransform Chess2DCameraTransform;
 
+	TArray<int32> ChessStartMap;
+	TArray<TWeakObjectPtr<class AChessActor>> ChessGameMap;
+	TArray<TWeakObjectPtr<class AChessActor>> ChessMoveMap;
+
+	TMap<class UChessMoverComponent*, bool> MoverWaitAnimPool;
+
 	TWeakObjectPtr<class AChessCameraPawn> ChessCameraPtr;
-
 	TWeakObjectPtr<class AChessPlayerController> ChessPlayerPtr;
-
 	TWeakObjectPtr<class AChessGameHUD> ChessGameHUD;
 
 	bool bWaitAnimation;
-
 	bool bGameOver;
 };
