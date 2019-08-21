@@ -25,3 +25,13 @@ void AChessLobbyMode::StartPlay()
 	LobbyHUDPtr = LobbyHUD;
 	LobbyHUDPtr->StartPlayHUD();
 }
+
+void AChessLobbyMode::GoInGameOnePlayer()
+{
+	UGameplayStatics::OpenLevel(this, TEXT("ChessMap"));
+}
+
+void AChessLobbyMode::GoInGameTwoPlayers()
+{
+	UGameplayStatics::OpenLevel(this, TEXT("ChessMap"));
+}

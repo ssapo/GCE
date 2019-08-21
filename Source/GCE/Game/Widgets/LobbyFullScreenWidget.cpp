@@ -57,11 +57,15 @@ void ULobbyFullScreenWidget::NativeDestruct()
 void ULobbyFullScreenWidget::OnOnePlayerClikedImpl()
 {
 	GCE_LOG_S(Log);
+
+	LobbyMode->GoInGameOnePlayer();
 }
 
 void ULobbyFullScreenWidget::OnTwoPlayerClikedImpl()
 {
 	GCE_LOG_S(Log);
+
+	LobbyMode->GoInGameTwoPlayers();
 }
 
 void ULobbyFullScreenWidget::OnNetworkPlayClikedImpl()

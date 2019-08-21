@@ -16,6 +16,9 @@ public:
 
 	virtual void StartPlay() override;
 
+	void GoInGameOnePlayer();
+	void GoInGameTwoPlayers();
+
 private:
 
 	TWeakObjectPtr<APlayerController> LobbyPlayerPtr;

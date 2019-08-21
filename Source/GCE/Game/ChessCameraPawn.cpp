@@ -8,9 +8,12 @@
 AChessCameraPawn::AChessCameraPawn()
 {
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
+	GCE_CHECK(nullptr != RootComponent);
+	
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	GCE_CHECK(nullptr != CameraComponent);
+
 	CameraComponent->SetupAttachment(RootComponent);
-	CameraComponent->SetRelativeLocationAndRotation(FVector(700.0f, 0.0f, 700.0f), FRotator(-60.0f, 0.0f, 0.0f));
 }
 
 // Called when the game starts or when spawned
@@ -25,6 +28,7 @@ void AChessCameraPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	CameraComponent->SetRelativeTransform(SetupTransform);
 }
 
 void AChessCameraPawn::SetCameraTransform(const FTransform& Transform)
