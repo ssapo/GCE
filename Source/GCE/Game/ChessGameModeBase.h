@@ -15,8 +15,6 @@ class GCE_API AChessGameMode : public AGameMode
 public:
 	AChessGameMode();
 
-	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
-
 	virtual void StartPlay() override;
 
 	UFUNCTION(Exec)
@@ -115,6 +113,7 @@ private:
 	TWeakObjectPtr<class AChessPlayerController> ChessPlayerPtr;
 	TWeakObjectPtr<class AChessGameHUD> ChessGameHUD;
 
+	bool bMultiPlayers;
 	bool bWaitAnimation;
 	bool bGameOver;
 };

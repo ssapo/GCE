@@ -30,7 +30,7 @@ void AChessPlayerController::ChangeCurrentClickedActor(AChessActor* ClickedActor
 	}
 }
 
-FORCEINLINE AChessActor* AChessPlayerController::GetCurrentClickedActor() const
+AChessActor* AChessPlayerController::GetCurrentClickedActor() const
 {
 	if (CurrentClickedActor.IsValid())
 	{
@@ -40,27 +40,27 @@ FORCEINLINE AChessActor* AChessPlayerController::GetCurrentClickedActor() const
 	return nullptr;
 }
 
-FORCEINLINE void AChessPlayerController::SetChoosenChessTeam(const EChessTeam& Team)
+void AChessPlayerController::SetChoosenChessTeam(const EChessTeam& Team)
 {
 	ChoosenChessTeam = Team;
 }
 
-FORCEINLINE EChessTeam AChessPlayerController::GetChoosenChessTeam() const
+EChessTeam AChessPlayerController::GetChoosenChessTeam() const
 {
 	return ChoosenChessTeam;
 }
 
-FORCEINLINE EChessTeam AChessPlayerController::GetOpponentTeam() const
+EChessTeam AChessPlayerController::GetOpponentTeam() const
 {
 	return UChessFuncs::GetOpponentTeam(ChoosenChessTeam);
 }
 
-FORCEINLINE void AChessPlayerController::SetMyTurn(bool Value)
+void AChessPlayerController::SetMyTurn(bool Value)
 {
 	bMyTurn = Value;
 }
 
-FORCEINLINE bool AChessPlayerController::IsMyTurn() const
+bool AChessPlayerController::IsMyTurn() const
 {
 	return bMyTurn;
 }

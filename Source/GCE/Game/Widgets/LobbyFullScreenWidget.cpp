@@ -71,4 +71,5 @@ void ULobbyFullScreenWidget::OnTwoPlayerClikedImpl()
 void ULobbyFullScreenWidget::OnNetworkPlayClikedImpl()
 {
 	GCE_LOG_S(Log);
+
 }

@@ -53,5 +53,8 @@ private:
 	UPROPERTY(Meta = (BindWidget))
 		class UButton* UnlockCameraMovingButton;
 
+	UPROPERTY(Meta = (BindWidgetAnim))
+		class UWidgetAnimation* StartAnim;
+
 	class AChessGameMode* GameMode;
 };

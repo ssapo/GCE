@@ -6,6 +6,8 @@
 #include <WidgetSwitcher.h>
 #include "GCE.h"
 #include "Game/ChessGameModeBase.h"
+#include "WidgetAnimation.h"
+#include "UMGSequencePlayer.h"
 
 void UChessFullScreenWidget::NativeConstruct()
 {
@@ -45,6 +47,11 @@ void UChessFullScreenWidget::NativeConstruct()
 	{
 		UnlockCameraMovingButton->OnClicked.AddDynamic(this, 
 			&UChessFullScreenWidget::OnUnlockCameraMovingClickedImpl);
+	}
+
+	if (StartAnim)
+	{
+		PlayAnimation(StartAnim);
 	}
 }
 

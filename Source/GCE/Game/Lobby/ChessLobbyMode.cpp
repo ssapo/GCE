@@ -28,10 +28,10 @@ void AChessLobbyMode::StartPlay()
 
 void AChessLobbyMode::GoInGameOnePlayer()
 {
-	UGameplayStatics::OpenLevel(this, TEXT("ChessMap"));
+	UGameplayStatics::OpenLevel(this, TEXT("ChessOnePlayer"), true, TEXT("Players=1"));
 }
 
 void AChessLobbyMode::GoInGameTwoPlayers()
 {
-	UGameplayStatics::OpenLevel(this, TEXT("ChessMap"));
+	UGameplayStatics::OpenLevel(this, TEXT("ChessTwoPlayers"), true, TEXT("Players=2"));
 }

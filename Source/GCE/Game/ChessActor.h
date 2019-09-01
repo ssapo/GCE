@@ -31,10 +31,10 @@ public:
 		void SetVisiblity(bool bToggle);
 
 	UFUNCTION(BlueprintPure)
-		FORCEINLINE	bool GetVisiblity() const;
+		bool GetVisiblity() const;
 
 	UFUNCTION(BlueprintPure)
-		FORCEINLINE	EChessTeam GetTeam() const;
+		EChessTeam GetTeam() const;
 
 protected:
 	UFUNCTION(BlueprintCallable, Category = "ChessPiece")

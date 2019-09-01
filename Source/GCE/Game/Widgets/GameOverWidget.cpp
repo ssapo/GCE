@@ -21,7 +21,7 @@ void UGameOverWidget::NativeConstruct()
 
 	if (LobbyButton)
 	{
-		RestartButton->OnClicked.AddDynamic(this,
+		LobbyButton->OnClicked.AddDynamic(this,
 			&UGameOverWidget::OnLobbyClickedImpl);
 	}
 }

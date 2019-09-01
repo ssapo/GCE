@@ -35,13 +35,6 @@ AChessGameMode::AChessGameMode()
 	BlackCameraTransform.SetRotation(FQuat(FRotator(-50.0f, -90.0f, 0.0f)));
 }
 
-void AChessGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
-{
-	GCE_LOG_S(Log);
-	Super::InitGame(MapName, Options, ErrorMessage);
-	GCE_LOG(Log, TEXT("%s%s%s"), *MapName, *Options, *ErrorMessage);
-}
-
 void AChessGameMode::StartPlay()
 {
 	Super::StartPlay();
@@ -146,6 +139,10 @@ void AChessGameMode::StartPlay()
 
 	bWaitAnimation = true;
 	bGameOver = false;
+
+	auto Players = UGameplayStatics::GetIntOption(OptionsString, TEXT("Players"), 0);
+	GCE_CHECK(0 < Players);
+	bMultiPlayers = (2 <= Players);
 }
 
 void AChessGameMode::GameOver()
@@ -160,7 +157,7 @@ void AChessGameMode::GameOver()
 
 void AChessGameMode::GoLobby()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), TEXT("Lobby.Map"), false);
+	UGameplayStatics::OpenLevel(this, TEXT("Lobby"));
 }
 
 void AChessGameMode::SettingTeam(const EChessTeam& Team, bool bFirst)

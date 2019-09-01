@@ -87,12 +87,12 @@ void AChessActor::SetVisiblity(bool bToggle)
 	}
 }
 
-FORCEINLINE bool AChessActor::GetVisiblity() const
+bool AChessActor::GetVisiblity() const
 {
 	return bVisiblityToggled;
 }
 
-FORCEINLINE EChessTeam AChessActor::GetTeam() const
+EChessTeam AChessActor::GetTeam() const
 {
 	return ChessTeamType;
 }
